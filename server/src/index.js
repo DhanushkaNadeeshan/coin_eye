@@ -1,13 +1,25 @@
+require("dotenv");
 const express = require("express");
+var bodyParser = require("body-parser");
+const { connectToDb } = require("./config/database");
+
+// connect to database
+connectToDb();
+
+const api = require("./routes/api");
 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.get('/api', (req, res) => {
-    res.json({ message: "Call from server" });
+app.use("/api", api);
+
+app.get("*", (req, res) => {
+  res.send("Unauthrized");
 });
 
 app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
+  console.log(`Server listening on ${PORT}`);
 });

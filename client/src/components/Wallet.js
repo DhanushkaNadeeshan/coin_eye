@@ -1,9 +1,41 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownLong, faUpLong } from '@fortawesome/free-solid-svg-icons';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
 // custom
 import Main from "./Main";
 import HistoryView from "./HistoryView";
 // import Button from "../theme/Button";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const data = {
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    datasets: [
+      {
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
 export default function Wallet() {
 
 
@@ -21,11 +53,11 @@ export default function Wallet() {
                     {/* show account details */}
                     <div className="flex justify-between text-slate-500">
                         <p>Transaction account</p>
-                        <p>1,000</p>
+                        <p>1,000 (ETH)</p>
                     </div>
                     <div className="flex justify-between text-slate-500">
                         <p>Saving account</p>
-                        <p>100,000</p>
+                        <p>100,000 (ETH)</p>
                     </div>
                     <div className="mt-8 flex justify-around font-bold">
                         <div>
@@ -50,11 +82,11 @@ export default function Wallet() {
                     {/* show account details */}
                     <div className="flex justify-between text-slate-500">
                         <p>Transaction account</p>
-                        <p>1,000</p>
+                        <p>1,000 (USD)</p>
                     </div>
                     <div className="flex justify-between text-slate-500">
                         <p>Saving account</p>
-                        <p>100,000</p>
+                        <p>100,000 (USD)</p>
                     </div>
                     <div className="mt-8 flex justify-around font-bold">
                         <div>
@@ -80,6 +112,7 @@ export default function Wallet() {
                 </div>
                 <div className='p-2 w-2/5'>
                     <p className='font-bold text-slate-200 text-center'>Statistic</p>
+                    <Pie data={data} />
                 </div>
             </div>
         </Main>

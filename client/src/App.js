@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 // custome 
 import Login from "./pages/login";
+import SingUp from "./pages/signup";
 import Dashboard from "./pages/dashboard";
 import Wallet from "./components/Wallet";
 import Swap from "./components/Swap";
@@ -9,10 +10,12 @@ import Notifications from "./components/Notifications";
 import Setting from "./components/Setting";
 import Topup from "./components/Topup";
 
+
 export default function App() {
   return (
     <Routes>
       <Route path="login" element={<Login />} />
+      <Route path="signup" element={<SingUp />} />
       {/* these pages are protected */}
       <Route element={<Protect />}>
         <Route path="/" element={<Dashboard />} >
@@ -23,7 +26,7 @@ export default function App() {
           <Route path="/setting"  element={<Setting/>}/>
         </Route>
       </Route>
-      <Route path="*" element={<p>There's nothing here: 404!</p>} />
+      <Route path="*" element={<p className="text-slate-200 text-center mt-32">There's nothing here: 404!</p>} />
     </Routes>
   );
 }
