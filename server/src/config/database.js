@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-
+const MongoDB_URL = process.env.DB_URL;
 const connectToDb = () => {
   mongoose.set("strictQuery", false);
   // Connect to the MongoDB database
-  mongoose.connect("mongodb://127.0.0.1:27017/wallet", {
-    useNewUrlParser: true
+  mongoose.connect(MongoDB_URL, {
+    useNewUrlParser: true,
   });
 
   // Get the connections
