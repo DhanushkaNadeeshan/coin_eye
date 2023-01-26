@@ -1,32 +1,11 @@
 import { useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
-const GOOGLE_CLIENT_ID = "39907080221-v82h7l8nn6qn027ul1fag3ajfksgh9oe.apps.googleusercontent.com";
-
-const useFetch = (url) => {
-  let navigate = useNavigate();
-  const handleGoogle = async (response) => {
-    const data = {
-      credential: response.credential,
-    };
-
-    axios
-      .post(url, data)
-      .then(({ data }) => {
-        const { success } = data;
-        if (success) {
-          return navigate("/");
-        }
-      })
-      .catch((err) => console.error(err));
-  };
-  return { handleGoogle };
-};
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 export default function Login() {
   const googleButtonRef = useRef();
-  const { handleGoogle } = useFetch("/api/login/google");
 
   useEffect(() => {
     /* global google */
@@ -45,6 +24,22 @@ export default function Login() {
       });
     }
   }, []);
+
+  const handleGoogle = (response) => {
+    const data = {
+      credential: response.credential,
+    };
+
+    axios
+      .post("/api/login/google", data)
+      .then(({ data }) => {
+        const { success } = data;
+        if (success) {
+          window.location.href = "/";
+        }
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <div className="w-3/5 mt-24 2xl:mt-48 text-center bg-slate-700 mx-auto rounded-lg p-4  border border-slate-600">

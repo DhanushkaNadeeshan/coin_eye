@@ -1,6 +1,5 @@
 export default function InputText({ onChange, value, defualtValue }) {
-
-    const style = `
+  const style = `
         w-full
         border-b-2
         bg-inherit
@@ -9,8 +8,13 @@ export default function InputText({ onChange, value, defualtValue }) {
         px-2
         focus:outline-none
         focus:border-sky-500
-    `
-    return (
-        <input className={style} onChange={onChange} defaultValue={defualtValue} value={value}>
-        </input>)
+    `;
+  return (
+    <input
+      className={style}
+      onChange={onChange}
+      defaultValue={defualtValue}
+      value={value}
+    ></input>
+  );
 }

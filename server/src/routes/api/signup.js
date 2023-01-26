@@ -6,7 +6,7 @@ const { createUser } = require("../../controllers/user");
 const router = express.Router();
 
 router.post("/google", async (req, res) => {
-  const { credential, question, anwser } = req.body;
+  const { credential, securityQuestion, anwser } = req.body;
 
   const verificationResponse = await verifyGoogleToken(credential);
 
@@ -20,7 +20,7 @@ router.post("/google", async (req, res) => {
 
   const user = {
     name: profile?.name,
-    securityQuestion: question,
+    securityQuestion: securityQuestion,
     email: profile?.email,
     anwser: anwser,
   };

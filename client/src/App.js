@@ -41,7 +41,7 @@ export default function App() {
 // handling authrition
 const useAuth = () => {
   let key = Cookies.get("key");
-  console.log("🚀 ~ file: App.js:44 ~ useAuth ~ key", key)
+  console.log("call");
   if (key) {
     return true;
   } else {
