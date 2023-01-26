@@ -64,8 +64,8 @@ export default function Dashboard() {
                 Notifications
               </p>
               <div className="flex h-3 w-3">
-                <span class="animate-ping absolute inline-flex w-2 h-2 rounded-full bg-red-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full w-2 h-2 bg-red-500"></span>
+                <span className="animate-ping absolute inline-flex w-2 h-2 rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full w-2 h-2 bg-red-500"></span>
               </div>
               {/* <span className=' px-2 mx-2 text-white bg-red-500 text-sm rounded'>1</span> */}
             </ManuItem>

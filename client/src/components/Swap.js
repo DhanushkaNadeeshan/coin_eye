@@ -103,7 +103,7 @@ export default function Swap() {
       </div>
       {/* get crypto */}
       <div className="bg-slate-800 my-4 p-4 border-t border-slate-700 rounded-md">
-        <p className="font-bold text-red-400 text-lg">Send crypto</p>
+        <p className="font-bold text-green-400 text-lg">Get crypto</p>
         <div className="flex">
           {/* section 1 - enter amount of needed crypto*/}
           <div className="w-1/3">
@@ -153,7 +153,7 @@ export default function Swap() {
               icon={faWallet}
             />
             <p className="font-bold text-slate-400">
-              User Requested <span className="text-red-500">10.00 ETH</span>
+              User Requested <span className="text-green-500">10.00 ETH</span>
             </p>
             <p className="font-bold text-slate-500">
               Wallet ID :3x32423ss3asdf

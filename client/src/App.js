@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
-// custome 
+import Cookies from "js-cookie";
+// custome
 import Login from "./pages/login";
 import SingUp from "./pages/signup";
 import Dashboard from "./pages/dashboard";
@@ -10,7 +11,6 @@ import Notifications from "./components/Notifications";
 import Setting from "./components/Setting";
 import Topup from "./components/Topup";
 
-
 export default function App() {
   return (
     <Routes>
@@ -18,27 +18,39 @@ export default function App() {
       <Route path="signup" element={<SingUp />} />
       {/* these pages are protected */}
       <Route element={<Protect />}>
-        <Route path="/" element={<Dashboard />} >
-          <Route path="/"  element={<Wallet/>}/>
-          <Route path="/swap"  element={<Swap/>}/>
-          <Route path="/topup"  element={<Topup/>}/>
-          <Route path="/notifications"  element={<Notifications/>}/>
-          <Route path="/setting"  element={<Setting/>}/>
+        <Route path="/" element={<Dashboard />}>
+          <Route path="/" element={<Wallet />} />
+          <Route path="/swap" element={<Swap />} />
+          <Route path="/topup" element={<Topup />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/setting" element={<Setting />} />
         </Route>
       </Route>
-      <Route path="*" element={<p className="text-slate-200 text-center mt-32">There's nothing here: 404!</p>} />
+      <Route
+        path="*"
+        element={
+          <p className="text-slate-200 text-center mt-32">
+            There's nothing here: 404!
+          </p>
+        }
+      />
     </Routes>
   );
 }
 
-// handling authrition 
+// handling authrition
 const useAuth = () => {
-  return true;
-
-}
+  let key = Cookies.get("key");
+  console.log("🚀 ~ file: App.js:44 ~ useAuth ~ key", key)
+  if (key) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
 function Protect() {
-  const isAuth = useAuth()
+  const isAuth = useAuth();
 
   return isAuth ? <Outlet /> : <Login />;
 }
