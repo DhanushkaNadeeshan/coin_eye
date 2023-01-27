@@ -15,4 +15,7 @@ router.use("/signup", signup);
 const login = require("./login");
 router.use("/login", login);
 
+const auth = require("./auth");
+router.use("/auth", auth);
+
 module.exports = router;

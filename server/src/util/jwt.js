@@ -9,7 +9,15 @@ function createToken(data) {
 }
 
 function validateToken(token) {
-  return jwt.verify(token, JWT_SECRET);
+  const data = {};
+  try {
+    data.reult = jwt.verify(token, JWT_SECRET);
+    data.success = true;
+  } catch (error) {
+    data.success = false;
+    data.error = error;
+  }
+  return data;
 }
 
 module.exports = { createToken, validateToken };
