@@ -1,4 +1,7 @@
 const User = require("../models/User");
+const Account = require("../models/Account");
+const { newWallet } = require("../util/wallet");
+var mongoose = require("mongoose");
 
 function getUsers() {
   return new Promise(async (resolve, reject) => {
@@ -24,10 +27,33 @@ function findUser(params) {
 
 function createUser(userData) {
   return new Promise((resolve, reject) => {
-    User.create(userData, (err, result) => {
+    User.create(userData, (err, createUserResult) => {
       if (err) reject(err);
+      // TODO: error handling
+      //create wallet in etherum blockchain network
+      const { privateKey, address } = newWallet();
 
-      resolve(result);
+      const newAccount = {
+        wallet_address: address,
+        private_key: privateKey,
+        ref_user: createUserResult._id,
+      };
+
+      // create account in data base
+      Account.create(newAccount, (err, createAccountResult) => {
+        if (err) reject(err);
+
+        const returnObject = {
+          ...createAccountResult,
+          wallet_address: createAccountResult.wallet_address,
+          t_account_ETH: createAccountResult.t_account_ETH,
+          s_account_ETH: createAccountResult.s_account_ETH,
+          t_account_USD: createAccountResult.t_account_USD,
+          s_account_USD: createAccountResult.s_account_USD,
+          cards: createAccountResult.cards,
+        };
+        resolve(returnObject);
+      });
     });
   });
 }

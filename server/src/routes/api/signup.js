@@ -3,6 +3,7 @@ const { verifyGoogleToken } = require("../../util/google");
 const { createToken } = require("../../util/jwt");
 const { createUser } = require("../../controllers/user");
 
+
 const router = express.Router();
 
 router.post("/google", async (req, res) => {
@@ -26,8 +27,10 @@ router.post("/google", async (req, res) => {
   };
 
   try {
+    // create user
     const newUser = await createUser(user);
     const token = createToken(user);
+    // create wallet
     res.cookie("key", token, { maxAge: 900000 });
     res.status(201).json({
       success: true,

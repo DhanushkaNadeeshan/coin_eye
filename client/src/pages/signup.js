@@ -56,7 +56,11 @@ export default function SingUp() {
               }
               setLoading(false);
             })
-            .catch((err) => console.error(err));
+            .catch((err) => {
+              alert("Account creation failed");
+              setLoading(false);
+              console.error(err);
+            });
         },
       });
 
