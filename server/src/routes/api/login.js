@@ -30,25 +30,26 @@ router.post("/google", async (req, res) => {
   }
 
   const profile = verificationResponse?.payload;
+
   try {
     const foundUser = await findUser({ email: profile.email });
 
-    if (foundUser) {
+    if (foundUser.length > 0) {
       const user = {
-        firstName: profile?.given_name,
-        lastName: profile?.family_name,
         picture: profile?.picture,
-        email: profile?.email,
+        name: foundUser[0].name,
+        email: foundUser[0].email,
+        account_details: foundUser[0].account,
       };
-      const token = createToken(user);
+      const token = createToken({ email: user.email });
       res.cookie("key", token, { maxAge: 900000 });
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         user,
       });
     }
   } catch (error) {
-    res.status(201).json({
+    res.status(200).json({
       success: false,
       message: error,
     });

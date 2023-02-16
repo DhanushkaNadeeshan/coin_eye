@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
-import Cookies from "js-cookie";
+import React from "react";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "./utils/slice/userSlice";
+// import Cookies from "js-cookie";
 // custome
 import Login from "./pages/login";
 import SingUp from "./pages/signup";
@@ -10,7 +12,6 @@ import Swap from "./components/Swap";
 import Notifications from "./components/Notifications";
 import Setting from "./components/Setting";
 import Topup from "./components/Topup";
-import axios from "axios";
 
 export default function App() {
   return (
@@ -39,35 +40,8 @@ export default function App() {
   );
 }
 
-// handling authrition
-const useAuth = () => {
-  const [isAuth, setIsAuth] = useState(false);
-
-  useEffect(() => {
-    const key = Cookies.get("key");
-    if (key) {
-      axios
-        .post("/api/auth/jwt", { key })
-        .then(({ data }) => {
-          if (data.valide) {
-            setIsAuth(true);
-          } else {
-            setIsAuth(false);
-          }
-        })
-        .catch((err) => {
-          setIsAuth(false);
-        });
-    } else {
-      setIsAuth(false);
-    }
-  }, []);
-
-  return { isAuth };
-};
-
 function Protect() {
-  const { isAuth } = useAuth();
+  const user = useSelector(selectUser);
 
-  return isAuth ? <Outlet /> : <Login />;
+  return user.isLogin ? <Outlet /> : <Navigate to="/login" replace={true} />;
 }

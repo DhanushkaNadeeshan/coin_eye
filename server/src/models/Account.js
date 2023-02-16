@@ -1,5 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+
+// cart schema
+const CardSchema = new Schema({
+  id: String,
+  CVC_CVV: String,
+  expiryDate: String,
+  nameOnCard: String,
+});
+
 const AccountSchema = new Schema({
   wallet_address: {
     type: String,
@@ -26,9 +35,7 @@ const AccountSchema = new Schema({
     type: Number,
     default: 0,
   },
-  cards: {
-    type: Array,
-  },
+  cards: [CardSchema],
   ref_user: {
     type: Schema.Types.ObjectId,
     ref: "User",

@@ -9,8 +9,16 @@ import {
 import Main from "./Main";
 import Button from "../theme/Button";
 import InputText from "../theme/InputText";
+import { useSelector } from "react-redux";
+import {
+  selectETHBalance,
+  selectUSDBalance,
+} from "../utils/slice/accountSlice";
 
 export default function Swap() {
+  const ETHBalance = useSelector(selectETHBalance);
+  const USDBalance = useSelector(selectUSDBalance);
+
   return (
     <Main name="Swap">
       {/* summery of account */}
@@ -26,11 +34,11 @@ export default function Swap() {
             <p className="font-bold  text-blue-500">Available crypto balance</p>
             <div className="flex justify-between text-slate-500">
               <p>Transaction account</p>
-              <p>1,000.00(ETH)</p>
+              <p>{ETHBalance.transactionAccountETH} (ETH)</p>
             </div>
             <div className="flex justify-between text-slate-500">
               <p>Saving account</p>
-              <p>1,000,000.00(ETH)</p>
+              <p>{ETHBalance.savingAccountETH} (ETH)</p>
             </div>
           </div>
         </div>
@@ -45,11 +53,11 @@ export default function Swap() {
             <p className="font-bold  text-blue-500">Available usd balance</p>
             <div className="flex justify-between text-slate-500">
               <p>Transaction account</p>
-              <p>1,000.00 (USD)</p>
+              <p>{USDBalance.transactionAccountUSD} (USD)</p>
             </div>
             <div className="flex justify-between text-slate-500">
               <p>Saving account</p>
-              <p>1,000,000.00 (USD)</p>
+              <p>{USDBalance.savingAccountUSD} (USD)</p>
             </div>
           </div>
         </div>

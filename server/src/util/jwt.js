@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+// TODO: descrease expire time
 function createToken(data) {
   return jwt.sign(data, JWT_SECRET, {
     expiresIn: "1d",

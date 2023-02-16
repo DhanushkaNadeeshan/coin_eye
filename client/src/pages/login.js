@@ -1,11 +1,18 @@
-import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../utils/slice/userSlice";
+import { setWalletDetails } from "../utils/slice/accountSlice";
+import Loader from "../theme/Loader";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 export default function Login() {
   const googleButtonRef = useRef();
+  const dispatch = useDispatch();
+  const [requiredLogin, setRequiredLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     /* global google */
@@ -26,6 +33,7 @@ export default function Login() {
   }, []);
 
   const handleGoogle = (response) => {
+    setLoading(true)
     const data = {
       credential: response.credential,
     };
@@ -34,30 +42,42 @@ export default function Login() {
       .post("/api/login/google", data)
       .then(({ data }) => {
         const { success } = data;
+
         if (success) {
-          window.location.href = "/";
+          const { name, email, picture, account_details } = data.user;
+          const accountDetails = account_details[0];
+          dispatch(setUser({ name, email, picture, loginStatus: true }));
+          dispatch(setWalletDetails({ ...accountDetails }));
+          // update login status
+          setRequiredLogin(false);
         }
+        setLoading(false)
       })
       .catch((err) => console.error(err));
   };
 
-  return (
-    <div className="w-3/5 mt-24 2xl:mt-48 text-center bg-slate-700 mx-auto rounded-lg p-4  border border-slate-600">
-      <h1 className="font-bold text-3xl text-cyan-500">Coin Eye</h1>
-      <h1 className="font-bold  text-cyan-600">Login in to the wallet</h1>
+  if (requiredLogin) {
+    return (
+      <div className="w-3/5 mt-24 2xl:mt-48 text-center bg-slate-700 mx-auto rounded-lg p-4  border border-slate-600">
+        {loading && <Loader />}
+        <h1 className="font-bold text-3xl text-cyan-500">Coin Eye</h1>
+        <h1 className="font-bold  text-cyan-600">Login in to the wallet</h1>
 
-      <div
-        className="my-8 flex justify-center"
-        ref={googleButtonRef}
-        data-text="signup_with"
-      ></div>
+        <div
+          className="my-8 flex justify-center"
+          ref={googleButtonRef}
+          data-text="signup_with"
+        ></div>
 
-      <p className="text-slate-400">Create a new account</p>
-      <Link to="/signup">
-        <samp className="font-bold text-sky-600 hover:text-sky-300">
-          Sing Up
-        </samp>
-      </Link>
-    </div>
-  );
+        <p className="text-slate-400">Create a new account</p>
+        <Link to="/signup">
+          <samp className="font-bold text-sky-600 hover:text-sky-300">
+            Sing Up
+          </samp>
+        </Link>
+      </div>
+    );
+  } else {
+    return <Navigate to="/" replace={true} />;
+  }
 }

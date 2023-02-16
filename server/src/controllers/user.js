@@ -17,9 +17,39 @@ function getUsers() {
 function findUser(params) {
   return new Promise(async (resolve, reject) => {
     try {
-      const data = await User.findOne(params).exec();
-      resolve(data);
+      User.aggregate([
+        {
+          $match: {
+            ...params,
+          },
+        },
+        {
+          $lookup: {
+            from: "accounts",
+            localField: "_id",
+            foreignField: "ref_user",
+            pipeline: [
+              {
+                $project: {
+                  wallet_address: 1,
+                  cards: 1,
+                  s_account_ETH: 1,
+                  s_account_USD: 1,
+                  t_account_ETH: 1,
+                  t_account_USD: 1,
+                },
+              },
+            ],
+            as: "account",
+          },
+        },
+      ]).exec((err, data) => {
+        console.log("🚀 ~ file: user.js:35 ~ ]).exec ~ data", data);
+        if (err) reject(err);
+        resolve(data);
+      });
     } catch (error) {
+      console.log("🚀 ~ file: user.js:24 ~ returnnewPromise ~ error", error);
       reject(error);
     }
   });

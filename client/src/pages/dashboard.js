@@ -1,6 +1,9 @@
 import { useState, createContext, useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useSelector } from "react-redux";
+import { selectUser } from "../utils/slice/userSlice";
+
 import {
   faUser,
   faWallet,
@@ -9,13 +12,25 @@ import {
   faBell,
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 // custome
 // import ManuItem from '../components/MenuItem';
 
 const MenuActiveContext = createContext("wallet");
 
 export default function Dashboard() {
+  const user = useSelector(selectUser);
+
+
   const [path, setPath] = useState("wallet");
+
+  const logout = () => {
+    axios.get("/api/logout").then(({ data }) => {
+      if (data.success) {
+        window.location.href = "/login";
+      }
+    });
+  };
 
   return (
     <>
@@ -23,8 +38,14 @@ export default function Dashboard() {
       <nav className="w-full bg-opacity-60 backdrop-blur-lg fixed top-0 px-2 py-4 bg-gray-700 flex justify-end z-10">
         <p className="font-bold text-white">
           <FontAwesomeIcon icon={faUser} className="mx-4 text-violet-700" />
-          User Name
+          {user.name}
         </p>
+        <button
+          onClick={logout}
+          className="bg-slate-600 mx-2 px-2 font-bold rounded hover:bg-slate-400 text-sm"
+        >
+          Logout
+        </button>
       </nav>
 
       {/* side bar */}

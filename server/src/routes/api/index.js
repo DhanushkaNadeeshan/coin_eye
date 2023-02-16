@@ -18,4 +18,7 @@ router.use("/login", login);
 const auth = require("./auth");
 router.use("/auth", auth);
 
+const logout = require("./logout");
+router.use("/logout", logout);
+
 module.exports = router;

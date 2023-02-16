@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { getUsers, createUser } = require("../../../controllers/user");
+const { cookieJwtAuth } = require("../../../middlewares/cookeJwtAuth");
 
-router.get("/", (req, res) => {
+router.get("/", cookieJwtAuth, (req, res) => {
   getUsers()
     .then((result) => {
       res.json({ success: true, result });

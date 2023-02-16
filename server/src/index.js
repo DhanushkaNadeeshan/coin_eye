@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 
 const { connectToDb } = require("./config/database");
 
@@ -33,6 +34,8 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
+
+app.use(cookieParser());
 
 app.use("/api", api);
 
