@@ -18,9 +18,9 @@ export const accountSlice = createSlice({
     setWalletDetails: (state, action) => {
       const payload = action.payload;
       state.walletAddress = payload.wallet_address;
-      state.savingAccountETH = payload.s_account_ETH;
+      state.savingAccountETH = payload.s_accountETH;
       state.savingAccountUSD = payload.s_account_USD;
-      state.transactionAccountETH = payload.t_account_ETH;
+      state.transactionAccountETH = payload.t_accountETH;
       state.transactionAccountUSD = payload.t_account_USD;
       state.cards = payload.cards;
     },

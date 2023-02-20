@@ -48,6 +48,8 @@ export default function SingUp() {
             .then(({ data }) => {
               const { success } = data;
               if (success) {
+                alert("Success,please try with login!");
+                window.location.href = "/login";
               } else {
                 const { message } = data;
                 if (message.code === 11000) {

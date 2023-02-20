@@ -2,7 +2,8 @@ const express = require("express");
 const { OAuth2Client } = require("google-auth-library");
 const { findUser } = require("../../controllers/user");
 const { createToken } = require("../../util/jwt");
-
+const { getBalance } = require("../../util/wallet");
+const { updateCryptoAccount } = require("../../controllers/account");
 const router = express.Router();
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -20,6 +21,13 @@ async function verifyGoogleToken(token) {
   }
 }
 
+const loginTrack = (req, res, next) => {
+  console.log("TODO:login track");
+  next();
+};
+
+router.use(loginTrack);
+
 router.post("/google", async (req, res) => {
   const verificationResponse = await verifyGoogleToken(req.body.credential);
 
@@ -32,23 +40,40 @@ router.post("/google", async (req, res) => {
   const profile = verificationResponse?.payload;
 
   try {
-    const foundUser = await findUser({ email: profile.email });
+    // finding user
+    let foundUser = await findUser({ email: profile.email });
 
     if (foundUser.length > 0) {
-      const user = {
-        picture: profile?.picture,
-        name: foundUser[0].name,
-        email: foundUser[0].email,
-        account_details: foundUser[0].account,
-      };
-      const token = createToken({ email: user.email });
+      foundUser = foundUser[0];
+      // remove unwanted property
+      delete foundUser.anwser;
+      delete foundUser.securityQuestion;
+      // assing google profile picture
+      foundUser.picture = profile?.picture;
+      // get wallet address from database data
+      const { wallet_address, total_ETH } = foundUser.account[0];
+      // get balance from etheriume
+      const balance = await getBalance(wallet_address);
+      // check etheriume network balance whether it's updated
+      updateCryptoAccount(wallet_address, total_ETH.$numberDecimal, balance);
+      // update etherum balance with actual balance
+      foundUser.account[0].total_ETH.$numberDecimal = balance;
+
+      const token = createToken({ email: foundUser.email });
+
       res.cookie("key", token, { maxAge: 900000 });
       res.status(200).json({
         success: true,
-        user,
+        user: foundUser,
+      });
+    } else {
+      res.status(200).json({
+        success: false,
+        message: "user not founded",
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(200).json({
       success: false,
       message: error,

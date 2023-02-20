@@ -3,6 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector } from "react-redux";
 import { selectUser } from "../utils/slice/userSlice";
+import { selectWalletAddress} from "../utils/slice/accountSlice";
 
 import {
   faUser,
@@ -20,7 +21,7 @@ const MenuActiveContext = createContext("wallet");
 
 export default function Dashboard() {
   const user = useSelector(selectUser);
-
+  const walletAddress = useSelector(selectWalletAddress);
 
   const [path, setPath] = useState("wallet");
 
@@ -36,6 +37,7 @@ export default function Dashboard() {
     <>
       {/* top bar */}
       <nav className="w-full bg-opacity-60 backdrop-blur-lg fixed top-0 px-2 py-4 bg-gray-700 flex justify-end z-10">
+        <code className="text-slate-400">Wallet Address: {walletAddress} |</code>
         <p className="font-bold text-white">
           <FontAwesomeIcon icon={faUser} className="mx-4 text-violet-700" />
           {user.name}
