@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   walletAddress: "",
+  totalUSD: 0,
+  totalETH: 0,
   savingAccountETH: 0,
   savingAccountUSD: 0,
   transactionAccountETH: 0,
@@ -18,16 +20,25 @@ export const accountSlice = createSlice({
     setWalletDetails: (state, action) => {
       const payload = action.payload;
       state.walletAddress = payload.wallet_address;
+      state.totalUSD = payload.totalUSD;
+      state.totalETH = payload.totalETH;
       state.savingAccountETH = payload.s_accountETH;
       state.savingAccountUSD = payload.s_account_USD;
       state.transactionAccountETH = payload.t_accountETH;
       state.transactionAccountUSD = payload.t_account_USD;
       state.cards = payload.cards;
     },
+    updateETH: (state, action) => {
+      const { totalETH, savingAccountETH, transactionAccountETH } =
+        action.payload;
+      state.totalETH = totalETH;
+      state.savingAccountETH = savingAccountETH;
+      state.transactionAccountETH = transactionAccountETH;
+    },
   },
 });
 
-export const { setWalletDetails } = accountSlice.actions;
+export const { setWalletDetails, updateETH } = accountSlice.actions;
 
 export const selectWalletAddress = (state) => {
   return state.account.walletAddress;
@@ -38,13 +49,13 @@ export const selectCards = (state) => {
 };
 
 export const selectETHBalance = (state) => {
-  const { savingAccountETH, transactionAccountETH } = state.account;
-  return { savingAccountETH, transactionAccountETH };
+  const { savingAccountETH, transactionAccountETH, totalETH } = state.account;
+  return { savingAccountETH, transactionAccountETH, totalETH };
 };
 
 export const selectUSDBalance = (state) => {
-  const { savingAccountUSD, transactionAccountUSD } = state.account;
-  return { savingAccountUSD, transactionAccountUSD };
+  const { savingAccountUSD, transactionAccountUSD, totalUSD } = state.account;
+  return { savingAccountUSD, transactionAccountUSD, totalUSD };
 };
 
 export default accountSlice.reducer;

@@ -33,7 +33,7 @@ export default function Login() {
   }, []);
 
   const createSavingAccountBalance = (total, transactionBalance) => {
-    total = parseFloat(total.$numberDecimal);
+    total = parseFloat(total);
     transactionBalance = parseFloat(transactionBalance.$numberDecimal);
     return total == 0 ? 0 : total - transactionBalance;
   };
@@ -48,8 +48,7 @@ export default function Login() {
       .post("/api/login/google", data)
       .then(({ data }) => {
         const { success } = data;
-        console.log("🚀 ~ file: login.js:45 ~ .then ~ data", data);
-
+        
         if (success) {
           let {
             name,
@@ -57,21 +56,23 @@ export default function Login() {
             picture,
             total_USD,
             t_account_USD,
-            account,
+            accountInfo,
             cards,
           } = data.user;
-          let { total_ETH, t_account_ETH, wallet_address } = account[0];
+          let { total_ETH, t_account_ETH, wallet_address } = accountInfo;
 
           const accountDetails = {
-            total_USD: parseFloat(total_USD.$numberDecimal),
+            totalUSD: parseFloat(total_USD.$numberDecimal),
             t_account_USD: parseFloat(t_account_USD.$numberDecimal),
             cards: cards,
             wallet_address: wallet_address,
             s_account_USD: createSavingAccountBalance(total_USD, t_account_USD),
-            total_ETH: parseFloat(total_ETH.$numberDecimal),
+            totalETH: parseFloat(total_ETH),
             t_accountETH: parseFloat(t_account_ETH.$numberDecimal),
             s_accountETH: createSavingAccountBalance(total_ETH, t_account_ETH),
           };
+
+          console.log(accountDetails);
           dispatch(setUser({ name, email, picture, loginStatus: true }));
           dispatch(setWalletDetails(accountDetails));
           // update login status

@@ -46,12 +46,6 @@ export default function Wallet() {
   const ETHBalance = useSelector(selectETHBalance);
   const USDBalance = useSelector(selectUSDBalance);
 
-  const totalETH =
-    ETHBalance.transactionAccountETH + ETHBalance.savingAccountETH;
-
-  const totalUSD =
-    USDBalance.transactionAccountUSD + USDBalance.savingAccountUSD;
-
   return (
     <Main name="Wallet">
       <div className="grid grid-cols-2 gap-16">
@@ -66,7 +60,7 @@ export default function Wallet() {
             ></img>
             {/* showing grand total in balance */}
             <p className="text-slate-200 text-xl">
-              {totalETH} <samp className="text-blue-700">ETH</samp>
+              {ETHBalance.totalETH} <samp className="text-blue-700">ETH</samp>
             </p>
           </div>
           {/* show account details */}
@@ -104,7 +98,7 @@ export default function Wallet() {
             ></img>
             {/* showing grand total in balance */}
             <p className="text-slate-200 text-xl">
-              {totalUSD} <samp className="text-amber-200">USD</samp>
+              {USDBalance.totalUSD} <samp className="text-amber-200">USD</samp>
             </p>
           </div>
           {/* show account details */}

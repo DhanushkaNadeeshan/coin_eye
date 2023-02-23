@@ -26,4 +26,48 @@ function updateCryptoAccount(address, balanceFromDb, balanceFromNetwork) {
   }
 }
 
-module.exports = { updateCryptoAccount };
+function updateETH(address, balance) {
+  return new Promise((resolve, reject) => {
+    Account.findOneAndUpdate(
+      { wallet_address: address },
+      { total_ETH: balance }
+    )
+      .then((rs) => {
+        resolve(rs);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+function getETHBlance(address) {
+  return new Promise((resolve, reject) => {
+    Account.findOne({ wallet_address: address })
+      .then((rs) => {
+        resolve(rs);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+function getAllWalletAddress() {
+  return new Promise((resolve, reject) => {
+    Account.find({}, "wallet_address")
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+module.exports = {
+  updateCryptoAccount,
+  updateETH,
+  getETHBlance,
+  getAllWalletAddress,
+};

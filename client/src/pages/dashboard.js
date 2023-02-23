@@ -1,9 +1,14 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../utils/slice/userSlice";
-import { selectWalletAddress} from "../utils/slice/accountSlice";
+import {
+  selectWalletAddress,
+  updateETH,
+  selectETHBalance,
+} from "../utils/slice/accountSlice";
+import io from "socket.io-client";
 
 import {
   faUser,
@@ -22,8 +27,35 @@ const MenuActiveContext = createContext("wallet");
 export default function Dashboard() {
   const user = useSelector(selectUser);
   const walletAddress = useSelector(selectWalletAddress);
+  const ETHBalance = useSelector(selectETHBalance);
+  const dispatch = useDispatch();
 
   const [path, setPath] = useState("wallet");
+
+  useEffect(() => {
+    const socket = io("http://localhost:5000", {
+      query: { address: walletAddress },
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected with ID:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("disconnect");
+    });
+
+    socket.on("message", (data) => {
+      alertHandler(data);
+      console.log("Received message:", data);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("message");
+    };
+  }, []);
 
   const logout = () => {
     axios.get("/api/logout").then(({ data }) => {
@@ -33,11 +65,38 @@ export default function Dashboard() {
     });
   };
 
+  const checkETHBalance = () => {
+    const url = `/api/account/ETH/${walletAddress}`;
+    axios
+      .get(url)
+      .then(({ data }) => {
+        if (data.success) {
+          let { savingAccountETH, transactionAccountETH } = ETHBalance;
+          savingAccountETH = data.balance - transactionAccountETH;
+          dispatch(updateETH({ totalETH: data.balance, savingAccountETH ,transactionAccountETH }));
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const alertHandler = (message) => {
+    switch (message) {
+      case "update.balance.ETH":
+        checkETHBalance();
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <>
       {/* top bar */}
       <nav className="w-full bg-opacity-60 backdrop-blur-lg fixed top-0 px-2 py-4 bg-gray-700 flex justify-end z-10">
-        <code className="text-slate-400">Wallet Address: {walletAddress} |</code>
+        <code className="text-slate-400">
+          Wallet Address: {walletAddress} |
+        </code>
         <p className="font-bold text-white">
           <FontAwesomeIcon icon={faUser} className="mx-4 text-violet-700" />
           {user.name}

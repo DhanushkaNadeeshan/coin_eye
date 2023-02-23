@@ -6,6 +6,9 @@ router.get("/", (req, res) => {
   res.json({ message: "Welcome to the user API!" });
 });
 
+const account = require("./account");
+router.use("/account", account);
+
 const user = require("./user");
 router.use("/user", user);
 

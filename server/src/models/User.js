@@ -3,10 +3,22 @@ const Schema = mongoose.Schema;
 
 // cards like debit or credit
 const CardSchema = new Schema({
-  id: String,
-  CVC_CVV: String,
-  expiryDate: String,
-  nameOnCard: String,
+  number: {
+    type: String,
+    unique: true,
+  },
+  cvc: {
+    type: String,
+    required: true,
+  },
+  expiryYear: {
+    type: Number,
+    required: true,
+  },
+  expiryMonth: {
+    type: Number,
+    required: true,
+  },
 });
 
 const UserSchema = new Schema({
@@ -24,13 +36,13 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  total_USD:{
-    type:  mongoose.Decimal128,
-    default: 0.0,
+  total_USD: {
+    type: Number,
+    default: 0,
   },
   t_account_USD: {
-    type: mongoose.Decimal128,
-    default: 0.0,
+    type: Number,
+    default: 0,
   },
   cards: [CardSchema],
 });
