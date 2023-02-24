@@ -81,4 +81,5 @@ function getUSD(info) {
   });
 }
 
+
 module.exports = { newCard, getUSD };
