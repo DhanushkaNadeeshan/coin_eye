@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../data-access/models/User");
 
 function getCards(id) {
   return new Promise((resolve, reject) => {

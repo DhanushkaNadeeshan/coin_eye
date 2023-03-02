@@ -10,7 +10,7 @@ function newWallet() {
   return response;
 }
 
-function getBalance(address) {
+function getETHBalance(address) {
   return new Promise(async (resolve, reject) => {
     if (address) {
       try {
@@ -27,4 +27,4 @@ function getBalance(address) {
   });
 }
 
-module.exports = { newWallet, getBalance };
+module.exports = { newWallet, getETHBalance };

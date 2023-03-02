@@ -1,5 +1,5 @@
-const User = require("../models/User");
-const Account = require("../models/Account");
+const User = require("../data-access/models/User");
+const Account = require("../data-access/models/Account");
 const { newWallet } = require("../util/wallet");
 
 function getUsers() {

@@ -1,4 +1,4 @@
-const Account = require("../models/Account");
+const Account = require("../../data-access/models/Account");
 
 function updateCryptoAccount(address, balanceFromDb, balanceFromNetwork) {
   balanceFromDb = parseFloat(balanceFromDb);

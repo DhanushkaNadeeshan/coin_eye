@@ -1,4 +1,4 @@
-const Transaction = require("../models/Transaction");
+const Transaction = require("../data-access/models/Transaction");
 
 function create(data) {
   return new Promise((resolve, reject) => {

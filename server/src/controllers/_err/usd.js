@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../data-access/models/User");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 function newCard(info) {

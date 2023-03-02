@@ -18,6 +18,8 @@ connectToDb();
 
 const api = require("./routes/api");
 
+const user = require("./routes/user");
+
 global.onlineUsers = {};
 
 const PORT = process.env.PORT || 5000;
@@ -49,6 +51,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use("/api", api);
+app.use("/user", user);
 
 // socket handling
 global.socketIO.on("connection", (socket) => {
