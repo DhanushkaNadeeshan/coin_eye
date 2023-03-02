@@ -46,8 +46,7 @@ app.use(bodyParser.json());
 
 app.use(cookieParser());
 
-const api2 = require("./routes/api");
-app.use("/api/v1", api2);
+// call api
 const api = require("./routes")
 app.use("/api", api);
 
