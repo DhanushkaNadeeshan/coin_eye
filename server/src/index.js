@@ -11,14 +11,10 @@ const provider = new ethers.providers.InfuraProvider("goerli", INFURA_ID);
 
 const { connectToDb } = require("./config/database");
 const { onBlockCallback } = require("./util/listen");
-const { getAllWalletAddress } = require("./controllers/account");
+// const { getAllWalletAddress } = require("./controllers/account");
 
 // connect to database
 connectToDb();
-
-const api = require("./routes/api");
-
-const user = require("./routes/user");
 
 global.onlineUsers = {};
 
@@ -50,8 +46,10 @@ app.use(bodyParser.json());
 
 app.use(cookieParser());
 
+const api2 = require("./routes/api");
+app.use("/api/v1", api2);
+const api = require("./routes")
 app.use("/api", api);
-app.use("/user", user);
 
 // socket handling
 global.socketIO.on("connection", (socket) => {
@@ -86,11 +84,11 @@ global.socketIO.on("connection", (socket) => {
 global.walletList = [];
 
 // get all wallets address for listen to event
-getAllWalletAddress().then((list) => {
-  for (data of list) {
-    global.walletList.push(data.wallet_address);
-  }
-});
+//getAllWalletAddress().then((list) => {
+//   for (data of list) {
+//     global.walletList.push(data.wallet_address);
+//   }
+// });
 
 // TODO: uncomment this
 // provider.on("block", (blockNumber) => {

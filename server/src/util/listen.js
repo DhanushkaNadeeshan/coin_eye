@@ -1,7 +1,6 @@
-const { sendAlert } = require("./alert");
-const { create } = require("../controllers/transaction");
+const { usecaseMake } = require("../use-cases/transaction");
 
-function onBlockCallback(ethers,provider, blockNumber) {
+function onBlockCallback(ethers, provider, blockNumber) {
   provider
     .getBlock(blockNumber)
     .then((block) => {
@@ -18,7 +17,6 @@ function onBlockCallback(ethers,provider, blockNumber) {
               );
 
               if (isTransaction) {
-
                 const transactionObject = {
                   txHash: txHash,
                   from: tx.from,
@@ -30,7 +28,7 @@ function onBlockCallback(ethers,provider, blockNumber) {
                 };
                 console.log(transactionObject);
 
-                create(transactionObject)
+                usecaseMake(transactionObject)
                   .then((rs) => {
                     // notify wallet owner if he is online
                     sendAlert(tx.to, "update.balance.ETH");

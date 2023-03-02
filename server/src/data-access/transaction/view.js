@@ -1,4 +1,4 @@
-const _view = ({Transaction}) => {
+const _view = ({ Transaction }) => {
   return ({ address }) => {
     return new Promise((resolve, reject) => {
       Transaction.find({ $or: [{ to: address }, { from: address }] })
@@ -11,3 +11,5 @@ const _view = ({Transaction}) => {
     });
   };
 };
+
+module.exports = _view;

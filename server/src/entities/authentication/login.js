@@ -1,4 +1,4 @@
-const login = () => {
+const _login = () => {
   return ({ email, picture }) => {
     if (!email) {
       throw new Error("Please insert credentail");
@@ -11,4 +11,4 @@ const login = () => {
   };
 };
 
-module.exports = login;
+module.exports = _login;

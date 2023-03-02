@@ -7,7 +7,7 @@ const {
   _updateTransactionBalanceUSD,
 } = require("./updateUSD");
 
-const viewETHController = _viewETH(useCase.usecaseViewETH);
+const viewETHController = _viewETH(useCase.usecaseViewETHByAddress);
 
 const updateTransactionETHController = _updateTransactionBalanceETH(
   useCase.updateTransactionBalanceETH

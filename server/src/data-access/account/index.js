@@ -10,16 +10,18 @@ const {
   _updateTransactionBalanceUSD,
   _updateSavingBalanceUSD,
 } = require("./updateUSD");
-const _viewETH = require("./viewETH");
+const { _viewAllETH, _viewETHByAddress } = require("./viewETH");
 
-const viewETH = _viewETH({ Account });
+const viewETHByAddress = _viewETHByAddress({ Account });
+const viewAllETH = _viewAllETH({ Account });
 const updateSavingBalanceETH = _updateSavingBalanceETH({ Account });
 const updateTransactionBalanceETH = _updateTransactionBalanceETH({ Account });
 const updateSavingBalanceUSD = _updateSavingBalanceUSD({ User, stripe });
 const updateTransactionBalanceUSD = _updateTransactionBalanceUSD({ User });
 
 module.exports = {
-  viewETH,
+  viewETHByAddress,
+  viewAllETH,
   updateSavingBalanceETH,
   updateSavingBalanceUSD,
   updateTransactionBalanceETH,

@@ -3,12 +3,12 @@ const _updateSavingBalanceUSD = ({ dataAccess, entities }) => {
     try {
       const data = entities.updateSavingBalanceUSD(info);
 
-      const card = {
-        wallet_address: data.get_walletAddress(),
-        get_balance: data.get_balance(),
+      const balanceInfo = {
+        id: data.get_id(),
+        balance: data.get_balance(),
       };
 
-      const result = await dataAccess.updateSavingBalanceUSD(card);
+      const result = await dataAccess.updateSavingBalanceUSD(balanceInfo);
       return result;
     } catch (error) {
       console.log("🚀 ~ file: update.js:17 ~ return ~ error:", error);
@@ -22,12 +22,12 @@ const _updateTransactionBalanceUSD = ({ dataAccess, entities }) => {
     try {
       const data = entities.updateTransactionBalanceUSD(info);
 
-      const card = {
-        wallet_address: data.get_walletAddress(),
-        get_balance: data.get_balance(),
+      const balanceInfo = {
+        id: data.get_id(),
+        balance: data.get_balance(),
       };
 
-      const result = await dataAccess.updateTransactionBalanceUSD(card);
+      const result = await dataAccess.updateTransactionBalanceUSD(balanceInfo);
       return result;
     } catch (error) {
       console.log("🚀 ~ file: update.js:17 ~ return ~ error:", error);

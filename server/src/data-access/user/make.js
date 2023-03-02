@@ -1,4 +1,4 @@
-const _make = ({ User, Account }) => {
+const _make = ({ User, Account, newWallet }) => {
   return function _make(info) {
     return new Promise((resolve, reject) => {
       try {
@@ -29,6 +29,7 @@ const _make = ({ User, Account }) => {
               };
               resolve(returnObject);
             });
+            // resolve(createUserResult);
           } else {
             reject("id isn't available");
           }

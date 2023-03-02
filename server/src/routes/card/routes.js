@@ -3,9 +3,11 @@ const route = (router, controller) => {
   // GET
   router.get("/:id", controller.selectController);
 
-  router.post("/signup/google", controller.makeWithGoogle);
+  router.post("/", controller.makeController);
 
-  router.put("/", controller.update);
+  router.put("/", controller.updateController);
+
+  router.delete("/:id", controller.removeController);
 
   return router;
 };

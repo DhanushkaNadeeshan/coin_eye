@@ -3,10 +3,6 @@ const route = (router, controller) => {
   // GET
   router.get("/:id", controller.selectController);
 
-  router.post("/signup/google", controller.makeWithGoogle);
-
-  router.put("/", controller.update);
-
   return router;
 };
 

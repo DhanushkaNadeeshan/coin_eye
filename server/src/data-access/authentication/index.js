@@ -1,7 +1,7 @@
 const User = require("../models/User");
 
-const _loginWithGoogle = require("./loginWithGoogle");
+const _login = require("./login");
 
-const loginWithGoogle = _loginWithGoogle({ User });
+const login = _login({ User });
 
-module.exports = { loginWithGoogle };
+module.exports = { login };

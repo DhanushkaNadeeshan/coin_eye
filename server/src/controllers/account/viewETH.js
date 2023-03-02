@@ -1,4 +1,4 @@
-const _viewET_viewETHHController = (usecaseSelect) => {
+const _viewETH = (usecaseSelect) => {
   return async (req, res) => {
     try {
       const id = req.params.id;

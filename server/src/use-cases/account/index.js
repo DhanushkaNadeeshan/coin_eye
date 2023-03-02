@@ -3,17 +3,20 @@ const entities = require("../../entities/account");
 // data-access
 const dataAccess = require("../../data-access/account");
 
-const _viewETH = require("./viewETH");
+
+const _viewETHByAddress = require("./viewETH");
+
 const {
   _updateSavingBalanceETH,
   _updateTransactionBalanceETH,
 } = require("./updateETH");
+
 const {
   _updateSavingBalanceUSD,
   _updateTransactionBalanceUSD,
 } = require("./updateUSD");
 
-const usecaseViewETH = _viewETH({ dataAccess, entities });
+const usecaseViewETHByAddress = _viewETHByAddress({ dataAccess, entities });
 const updateSavingBalanceUSD = _updateSavingBalanceUSD({
   dataAccess,
   entities,
@@ -32,7 +35,7 @@ const updateTransactionBalanceETH = _updateTransactionBalanceETH({
 });
 
 module.exports = {
-  usecaseViewETH,
+  usecaseViewETHByAddress,
   updateSavingBalanceUSD,
   updateTransactionBalanceUSD,
   updateSavingBalanceETH,

@@ -4,8 +4,8 @@ const _updateSavingBalanceETH = ({ dataAccess, entities }) => {
       const data = entities.updateSavingBalanceETH(info);
 
       const card = {
-        wallet_address: data.get_walletAddress(),
-        get_balance: data.get_balance(),
+        address: data.get_walletAddress(),
+        balance: data.get_balance(),
       };
 
       const result = await dataAccess.updateSavingBalanceETH(card);
@@ -23,8 +23,8 @@ const _updateTransactionBalanceETH = ({ dataAccess, entities }) => {
       const data = entities.updateTransactionBalanceETH(info);
 
       const card = {
-        wallet_address: data.get_walletAddress(),
-        get_balance: data.get_balance(),
+        address: data.get_walletAddress(),
+        balance: data.get_balance(),
       };
 
       const result = await dataAccess.updateTransactionBalanceETH(card);

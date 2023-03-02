@@ -7,6 +7,7 @@ function newWallet() {
     privateKey: wallet.privateKey,
     address: wallet.address,
   };
+
   return response;
 }
 

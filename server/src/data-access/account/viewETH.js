@@ -1,4 +1,4 @@
-const _viewETH = ({ Account }) => {
+const _viewETHByAddress = ({ Account }) => {
   return (info) => {
     const { address } = info;
     return new Promise((resolve, reject) => {
@@ -13,4 +13,18 @@ const _viewETH = ({ Account }) => {
   };
 };
 
-module.exports = _viewETH;
+const _viewAllETH = ({ Account }) => {
+  return () => {
+    return new Promise((resolve, reject) => {
+      Account.find({})
+        .then((rs) => {
+          resolve(rs);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+};
+
+module.exports = { _viewETHByAddress, _viewAllETH };
