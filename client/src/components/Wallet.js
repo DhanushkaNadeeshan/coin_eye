@@ -9,7 +9,10 @@ import HistoryView from "./HistoryView";
 import {
   selectETHBalance,
   selectUSDBalance,
+  selectWalletAddress,
 } from "../utils/slice/accountSlice";
+
+import useTransactionAPI from "../hooks/transaction";
 // import Button from "../theme/Button";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -42,9 +45,12 @@ const data = {
 };
 
 export default function Wallet() {
-  //   const walletAddress = useSelector(selectWalletAddress);
+  const walletAddress = useSelector(selectWalletAddress);
   const ETHBalance = useSelector(selectETHBalance);
   const USDBalance = useSelector(selectUSDBalance);
+
+  const { dataTX, isLoading } = useTransactionAPI(walletAddress);
+ 
 
   return (
     <Main name="Wallet">
@@ -130,18 +136,13 @@ export default function Wallet() {
         <div className="p-2 w-3/5">
           <p className="font-bold text-slate-200">History</p>
           <div className="py-3">
-            <HistoryView
-              description="send money => 234234"
-              time="2 hours ago"
-            />
-            <HistoryView
-              description="send money => 234234"
-              time="2 hours ago"
-            />
-            <HistoryView
-              description="send money => 234234"
-              time="2 hours ago"
-            />
+            {isLoading && <p className="text-slate-400 text-center">Loading TX...</p>}
+            {!isLoading &&
+              dataTX.map((infoTX, i) => {
+                return (
+                  <HistoryView info={infoTX} key={i} address={walletAddress} />
+                );
+              })}
           </div>
         </div>
         <div className="p-2 w-2/5">

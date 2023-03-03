@@ -1,7 +1,7 @@
 // entity
-const entities = require("../../entities/user");
+const entities = require("../../entities/transaction");
 // data-access
-const dataAccess = require("../../data-access/user");
+const dataAccess = require("../../data-access/transaction");
 
 const _view = require("./view");
 const _make = require("./make");

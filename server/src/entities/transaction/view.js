@@ -1,4 +1,4 @@
-const view = () => {
+const _view = () => {
   return function _view({ address }) {
     if (!address) {
       throw new Error("Please insert address");
@@ -10,4 +10,4 @@ const view = () => {
   };
 };
 
-module.exports = view;
+module.exports = _view;

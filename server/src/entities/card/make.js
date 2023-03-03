@@ -1,5 +1,9 @@
-const make = () => {
-  return function _make({ number, cvc, expiryYear, expiryMonth }) {
+const _make = () => {
+  return function _make({ id, number, cvc, expiryYear, expiryMonth }) {
+    if (!id) {
+      throw new Error("Please insert id");
+    }
+
     if (!number) {
       throw new Error("Please insert number");
     }
@@ -17,6 +21,7 @@ const make = () => {
     }
 
     return Object.freeze({
+      get_id: () => id,
       get_number: () => number,
       get_cvc: () => cvc,
       get_expiryYear: () => expiryYear,
@@ -25,4 +30,4 @@ const make = () => {
   };
 };
 
-module.exports = make;
+module.exports = _make;

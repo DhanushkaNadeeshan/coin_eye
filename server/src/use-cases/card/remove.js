@@ -1,9 +1,10 @@
-const _remove = ({ dataAccess, etities }) => {
+const _remove = ({ dataAccess, entities }) => {
   return async (info) => {
     try {
-      const data = etities.view(info);
+      const data = entities.remove(info);
       const id = data.get_id();
-      return await dataAccess.remove({ id });
+      const userId = data.get_userId();
+      return await dataAccess.remove({ id, userId });
     } catch (error) {
       console.log("🚀 ~ file: view.js:8 ~ view ~ error:", error);
 

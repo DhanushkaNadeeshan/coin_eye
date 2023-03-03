@@ -7,7 +7,7 @@ const route = (router, controller) => {
 
   router.put("/", controller.updateController);
 
-  router.delete("/:id", controller.removeController);
+  router.delete("/", controller.removeController);
 
   return router;
 };

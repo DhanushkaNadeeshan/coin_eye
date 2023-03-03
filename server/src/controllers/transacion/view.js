@@ -1,8 +1,8 @@
 const _view = (usecaseSelect) => {
   return async (req, res) => {
     try {
-      const id = req.params.id;
-      const result = await usecaseSelect({ id });
+      const address = req.params.address;
+      const result = await usecaseSelect({ address });
       res.json({ success: true, result });
     } catch (error) {
       // TODO: make error stander

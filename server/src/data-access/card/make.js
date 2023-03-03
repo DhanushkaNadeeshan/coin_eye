@@ -2,9 +2,13 @@ const _make = ({ User }) => {
   return (info) => {
     return new Promise(async (resolve, reject) => {
       const { id, ...cardInfo } = info;
+      console.log("🚀 ~ file: make.js:5 ~ returnnewPromise ~ id:", id);
 
       User.findOne({ _id: id })
         .then((user) => {
+          if (!user) {
+            return reject("User can't find");
+          }
           const existingCard = user.cards.find((card) => {
             return card.number == cardInfo.number;
           });
@@ -16,7 +20,7 @@ const _make = ({ User }) => {
             user
               .save()
               .then((rs) => {
-                resolve(rs);
+                resolve(rs.cards);
               })
               .catch((error) => {
                 reject(error);

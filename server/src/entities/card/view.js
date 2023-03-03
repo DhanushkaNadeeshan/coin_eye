@@ -1,4 +1,4 @@
-const view = () => {
+const _view = () => {
   // id: user id
   return ({ id }) => {
     if (!id) {
@@ -11,4 +11,4 @@ const view = () => {
   };
 };
 
-module.exports = view;
+module.exports = _view;

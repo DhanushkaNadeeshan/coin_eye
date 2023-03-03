@@ -1,7 +1,7 @@
-const view = require("./view");
-const make = require("./make");
+const _view = require("./view");
+const _make = require("./make");
 
-const _view = view();
-const _make = make();
+const view = _view();
+const make = _make();
 
-module.exports = { _view, _make };
+module.exports = { view, make };

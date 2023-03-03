@@ -1,4 +1,4 @@
-const update = () => {
+const _update = () => {
   return function _update({ id, number, cvc, expiryYear, expiryMonth }) {
     if (!id) {
       throw new Error("Please insert id");
@@ -28,4 +28,4 @@ const update = () => {
     });
   };
 };
-module.exports = update;
+module.exports = _update;

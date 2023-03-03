@@ -1,8 +1,8 @@
 const _remove = (usecaseRemove) => {
   return async (req, res) => {
     try {
-      const id = req.params.id;
-      const result = await usecaseRemove({ id });
+      const body = req.body;
+      const result = await usecaseRemove(body);
       res.json({ success: true, result });
     } catch (error) {
       // TODO: make error stander

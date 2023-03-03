@@ -1,7 +1,7 @@
 const route = (router, controller) => {
   // #####
   // GET
-  router.get("/:id", controller.selectController);
+  router.get("/ETH/:address", controller.selectController);
 
   return router;
 };

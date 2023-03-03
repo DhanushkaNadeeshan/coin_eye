@@ -1,4 +1,4 @@
-const make = () => {
+const _make = () => {
   return function _make({
     txHash,
     from,
@@ -24,4 +24,4 @@ const make = () => {
   };
 };
 
-module.exports = make;
+module.exports = _make;

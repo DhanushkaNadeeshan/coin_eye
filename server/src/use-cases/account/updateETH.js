@@ -24,7 +24,8 @@ const _updateTransactionBalanceETH = ({ dataAccess, entities }) => {
 
       const card = {
         address: data.get_walletAddress(),
-        balance: data.get_balance(),
+        amount: data.get_amount(),
+        status: data.get_status(),
       };
 
       const result = await dataAccess.updateTransactionBalanceETH(card);

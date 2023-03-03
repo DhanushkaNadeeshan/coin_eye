@@ -4,6 +4,7 @@ const _make = ({ dataAccess, entities }) => {
       const data = entities.make(info);
 
       const card = {
+        id: data.get_id(),
         number: data.get_number(),
         cvc: data.get_cvc(),
         expiryYear: data.get_expiryYear(),
