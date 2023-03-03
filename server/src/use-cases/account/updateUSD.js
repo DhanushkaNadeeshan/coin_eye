@@ -5,14 +5,15 @@ const _updateSavingBalanceUSD = ({ dataAccess, entities }) => {
 
       const balanceInfo = {
         id: data.get_id(),
-        balance: data.get_balance(),
+        amount: data.get_amount(),
+        number: data.get_number(),
       };
 
       const result = await dataAccess.updateSavingBalanceUSD(balanceInfo);
       return result;
     } catch (error) {
       console.log("🚀 ~ file: update.js:17 ~ return ~ error:", error);
-      return { msg: "user creation faild" };
+      throw new Error("used geting error");
     }
   };
 };
@@ -24,14 +25,14 @@ const _updateTransactionBalanceUSD = ({ dataAccess, entities }) => {
 
       const balanceInfo = {
         id: data.get_id(),
-        balance: data.get_balance(),
+        amount: data.get_amount(),
       };
 
       const result = await dataAccess.updateTransactionBalanceUSD(balanceInfo);
       return result;
     } catch (error) {
       console.log("🚀 ~ file: update.js:17 ~ return ~ error:", error);
-      return { msg: "user creation faild" };
+      throw new Error("_updateTransactionBalanceUSD");
     }
   };
 };

@@ -1,33 +1,34 @@
 const _updateSavingBalanceUSD = () => {
-  return ({ id, balance }) => {
+  return ({ id, amount, number }) => {
     if (!id) {
       throw new Error("Please insert id");
     }
 
-    if (!balance) {
+    if (!amount) {
       throw new Error("Please insert balance");
     }
 
     return Object.freeze({
       get_id: () => id,
-      get_balance: () => balance,
+      get_amount: () => amount,
+      get_number: () => number,
     });
   };
 };
 
 const _updateTransactionBalanceUSD = () => {
-  return ({ id, balance }) => {
+  return ({ id, amount }) => {
     if (!id) {
       throw new Error("Please insert id");
     }
 
-    if (!balance) {
+    if (!amount) {
       throw new Error("Please insert balance");
     }
 
     return Object.freeze({
       get_id: () => id,
-      get_balance: () => balance,
+      get_amount: () => amount,
     });
   };
 };

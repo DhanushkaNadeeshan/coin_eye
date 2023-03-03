@@ -1,5 +1,5 @@
 const _updateSavingBalanceUSD = ({ User, stripe }) => {
-  return ({ id, balance }) => {
+  return ({ id, amount, number }) => {
     return new Promise(async (resolve, reject) => {
       try {
         let user = await User.findOne({ _id: id });
@@ -9,6 +9,7 @@ const _updateSavingBalanceUSD = ({ User, stripe }) => {
         }
 
         const cardInfo = user.cards.find((data) => data.number === number);
+        
 
         if (!cardInfo) {
           return reject("can not find card");
@@ -25,7 +26,7 @@ const _updateSavingBalanceUSD = ({ User, stripe }) => {
         });
 
         const { amount_received, status } = await stripe.paymentIntents.create({
-          amount: balance,
+          amount: amount,
           currency: "usd",
           payment_method: paymentMethod.id,
           confirm: true,
@@ -48,9 +49,9 @@ const _updateSavingBalanceUSD = ({ User, stripe }) => {
 };
 
 const _updateTransactionBalanceUSD = ({ User }) => {
-  return ({ id, balance }) => {
+  return ({ id, amount }) => {
     return new Promise((resolve, reject) => {
-      User.findOneAndUpdate({ _id: id }, { t_account_USD: balance })
+      User.findOneAndUpdate({ _id: id }, { t_account_USD: amount })
         .then((rs) => {
           resolve(rs);
         })
