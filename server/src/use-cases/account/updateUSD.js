@@ -26,6 +26,7 @@ const _updateTransactionBalanceUSD = ({ dataAccess, entities }) => {
       const balanceInfo = {
         id: data.get_id(),
         amount: data.get_amount(),
+        status: data.get_status(),
       };
 
       const result = await dataAccess.updateTransactionBalanceUSD(balanceInfo);

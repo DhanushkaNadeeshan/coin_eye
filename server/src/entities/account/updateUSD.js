@@ -17,7 +17,7 @@ const _updateSavingBalanceUSD = () => {
 };
 
 const _updateTransactionBalanceUSD = () => {
-  return ({ id, amount }) => {
+  return ({ id, amount, status }) => {
     if (!id) {
       throw new Error("Please insert id");
     }
@@ -26,9 +26,13 @@ const _updateTransactionBalanceUSD = () => {
       throw new Error("Please insert balance");
     }
 
+    if (!status) {
+      throw new Error("Please insert status");
+    }
     return Object.freeze({
       get_id: () => id,
       get_amount: () => amount,
+      get_status: () => status,
     });
   };
 };

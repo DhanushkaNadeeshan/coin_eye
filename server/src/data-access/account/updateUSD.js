@@ -9,7 +9,6 @@ const _updateSavingBalanceUSD = ({ User, stripe }) => {
         }
 
         const cardInfo = user.cards.find((data) => data.number === number);
-        
 
         if (!cardInfo) {
           return reject("can not find card");
@@ -49,15 +48,24 @@ const _updateSavingBalanceUSD = ({ User, stripe }) => {
 };
 
 const _updateTransactionBalanceUSD = ({ User }) => {
-  return ({ id, amount }) => {
-    return new Promise((resolve, reject) => {
-      User.findOneAndUpdate({ _id: id }, { t_account_USD: amount })
-        .then((rs) => {
-          resolve(rs);
-        })
-        .catch((error) => {
-          reject(error);
+  return ({ id, amount, status }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await User.findOne({ _id: id });
+        let { t_account_USD } = user;
+        if (status === "add") {
+          user.t_account_USD = t_account_USD + amount;
+        } else {
+          user.t_account_USD = t_account_USD - amount;
+        }
+        let rs = await user.save();
+        resolve({
+          totalUSD: user.total_USD,
+          transactionUSDBalance: user.t_account_USD,
         });
+      } catch (error) {
+        reject(error);
+      }
     });
   };
 };
