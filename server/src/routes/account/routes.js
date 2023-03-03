@@ -1,7 +1,8 @@
 const route = (router, controller) => {
   // #####
   // GET
-  router.get("/ETH/:id", controller.viewETHController);
+
+  router.get("/ETH/:address", controller.viewETHController);
 
   router.put("/ETH/transaction", controller.updateTransactionETHController);
 

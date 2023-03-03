@@ -1,12 +1,12 @@
 const _viewETH = () => {
   // id: user id
-  return ({ walletAddress }) => {
-    if (!id) {
+  return ({ address }) => {
+    if (!address) {
       throw new Error("Please insert address");
     }
 
     return Object.freeze({
-      get_walletAddress: () => walletAddress,
+      get_walletAddress: () => address,
     });
   };
 };

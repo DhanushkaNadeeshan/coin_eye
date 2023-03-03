@@ -1,7 +1,7 @@
-const _viewETHByAddress = ({ dataAccess, etities }) => {
+const _viewETHByAddress = ({ dataAccess, entities }) => {
   return async (info) => {
     try {
-      const data = etities.viewETH(info);
+      const data = entities.viewETH(info);
       const address = data.get_walletAddress();
       return await dataAccess.viewETHByAddress({ address });
     } catch (error) {
