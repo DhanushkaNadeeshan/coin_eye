@@ -19,7 +19,7 @@ const _login = ({
         delete info.anwser;
         delete info.securityQuestion;
         // google picture
-        info.picture = data.picture();
+        info.picture = data.get_picture();
 
         let accountInfo = account[0];
         // get balance from etheriume
@@ -39,7 +39,7 @@ const _login = ({
       }
     } catch (error) {
       console.log("🚀 ~ file: login.js:13 ~ return ~ error:", error);
-      return { msg: "user login faild" };
+      throw new Error("User loging is faild!");
     }
   };
 };
