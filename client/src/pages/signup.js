@@ -44,7 +44,7 @@ export default function SingUp() {
           const data = { credential, securityQuestion, anwser };
           setLoading(true);
           axios
-            .post("/api/signup/google", data)
+            .post("/api/user/signup/google", data)
             .then(({ data }) => {
               const { success } = data;
               if (success) {

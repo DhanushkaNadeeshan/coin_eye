@@ -45,7 +45,7 @@ export default function Login() {
     };
 
     axios
-      .post("/api/login/google", data)
+      .post("/api/authentication/login/google", data)
       .then(({ data }) => {
         const { success } = data;
         
@@ -58,15 +58,17 @@ export default function Login() {
             t_account_USD,
             accountInfo,
             cards,
-          } = data.user;
+          } = data.result;
           let { total_ETH, t_account_ETH, wallet_address } = accountInfo;
 
           const accountDetails = {
-            totalUSD: parseFloat(total_USD.$numberDecimal),
-            t_account_USD: parseFloat(t_account_USD.$numberDecimal),
+            totalUSD: total_USD,
+            t_account_USD: t_account_USD,
             cards: cards,
             wallet_address: wallet_address,
-            s_account_USD: createSavingAccountBalance(total_USD, t_account_USD),
+            s_account_USD: ()=>{
+              return total_USD == 0 ? 0 : total_USD - t_account_USD;
+            },
             totalETH: parseFloat(total_ETH),
             t_accountETH: parseFloat(t_account_ETH.$numberDecimal),
             s_accountETH: createSavingAccountBalance(total_ETH, t_account_ETH),
@@ -76,7 +78,7 @@ export default function Login() {
           dispatch(setUser({ name, email, picture, loginStatus: true }));
           dispatch(setWalletDetails(accountDetails));
           // update login status
-          setRequiredLogin(false);
+          // setRequiredLogin(false);
         }
         setLoading(false);
       })
