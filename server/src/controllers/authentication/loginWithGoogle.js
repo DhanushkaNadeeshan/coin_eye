@@ -17,7 +17,13 @@ const _loginWithGoogle = (verifyGoogleToken, login) => {
       res.json({ success: true, result });
     } catch (error) {
       // TODO: make error stander
-      res.status(400).json({ msg: "viewing error" });
+      console.log("🚀 ~ file: loginWithGoogle.js:21 ~ return ~ error.message:", error.message)
+      if(error.message==='Error: unavailable'){
+        res.status(404).json({status:"unavailable", msg: "User not unavailable!" });
+      }else{
+        res.status(500).json({status:"error", msg: "error login" });
+      }
+      
     }
   };
 };

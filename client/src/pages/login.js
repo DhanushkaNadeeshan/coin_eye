@@ -89,7 +89,13 @@ export default function Login() {
         setLoading(false);
       })
       .catch((err) => {
+        console.log("🚀 ~ file: login.js:92 ~ handleGoogle ~ err:", err)
         setLoading(false);
+        const {data} = err.response;
+        
+        if(data.status==='unavailable'){
+          alert("Pleas sign up")
+        }
         console.error(err);
       });
   };
