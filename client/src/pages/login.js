@@ -33,14 +33,10 @@ export default function Login() {
   }, []);
 
   const createSavingAccountBalance = (total, transactionBalance) => {
-    total = parseFloat(total);
+    total = parseFloat(total.$numberDecimal);
     transactionBalance = parseFloat(transactionBalance.$numberDecimal);
     return total == 0 ? 0 : total - transactionBalance;
   };
-
-  const createSavingAccountBalanceUsd = ()=>{
-
-  }
 
   const handleGoogle = (response) => {
     setLoading(true);
@@ -53,10 +49,11 @@ export default function Login() {
       .then(({ data }) => {
         const { success } = data;
 
-        console.log("🚀 ~ file: login.js:51 ~ .then ~ data:", data)
-        
+        console.log("🚀 ~ file: login.js:51 ~ .then ~ data:", data);
+
         if (success) {
           let {
+            id,
             name,
             email,
             picture,
@@ -67,7 +64,8 @@ export default function Login() {
           } = data.result;
           let { total_ETH, t_account_ETH, wallet_address } = accountInfo;
 
-          const usdSavingBalance = total_USD == 0 ? 0 : total_USD - t_account_USD
+          const usdSavingBalance =
+            total_USD == 0 ? 0 : total_USD - t_account_USD;
 
           const accountDetails = {
             totalUSD: total_USD,
@@ -75,13 +73,13 @@ export default function Login() {
             cards: cards,
             wallet_address: wallet_address,
             s_account_USD: usdSavingBalance,
-            totalETH: parseFloat(total_ETH),
+            totalETH: parseFloat(total_ETH.$numberDecimal),
             t_accountETH: parseFloat(t_account_ETH.$numberDecimal),
             s_accountETH: createSavingAccountBalance(total_ETH, t_account_ETH),
           };
 
           console.log(accountDetails);
-          dispatch(setUser({ name, email, picture, loginStatus: true }));
+          dispatch(setUser({ id, name, email, picture, loginStatus: true }));
           dispatch(setWalletDetails(accountDetails));
           // update login status
           setRequiredLogin(false);
@@ -89,12 +87,12 @@ export default function Login() {
         setLoading(false);
       })
       .catch((err) => {
-        console.log("🚀 ~ file: login.js:92 ~ handleGoogle ~ err:", err)
+        console.log("🚀 ~ file: login.js:92 ~ handleGoogle ~ err:", err);
         setLoading(false);
-        const {data} = err.response;
-        
-        if(data.status==='unavailable'){
-          alert("Pleas sign up")
+        const { data } = err.response;
+
+        if (data.status === "unavailable") {
+          alert("Pleas sign up");
         }
         console.error(err);
       });

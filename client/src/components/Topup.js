@@ -3,13 +3,23 @@ import Main from "./Main";
 import Button from "../theme/Button";
 import Modal from "../theme/Modal";
 import InputText from "../theme/InputText";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectCards } from "../utils/slice/accountSlice";
+import { selectUser } from "../utils/slice/userSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { updateCard } from "../utils/slice/accountSlice";
+import Alert from "../theme/Alert";
 
 export default function Topup() {
+  const dispatch = useDispatch();
   const cardsList = useSelector(selectCards);
+  const userSelector = useSelector(selectUser);
+
   const [statusModalAdd, setStatusModalAdd] = useState(false);
   const [statusModalUpdate, setStatusModalUpdate] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const closeModalAdd = () => {
     setStatusModalAdd(false);
@@ -24,8 +34,44 @@ export default function Topup() {
     setStatusModalUpdate(true);
   };
 
+  const alertHandler = () => {
+    setShowAlert(true);
+    const timer = setTimeout(() => {
+      setShowAlert(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  };
+
+  const insertNewCard = (e) => {
+    e.preventDefault();
+
+    // TODO: error handling
+    const data = new FormData(e.target);
+
+    const jsonData = {};
+
+    for (const [key, value] of data.entries()) {
+      jsonData[key] = parseInt(value);
+    }
+
+    jsonData.id = userSelector.id;
+
+    axios
+      .post("/api/card", jsonData)
+      .then(({ data }) => {
+        setStatusModalAdd(false);
+        dispatch(updateCard(data.result));
+        alertHandler();
+      })
+      .catch((error) => {
+        console.log("🚀 ~ file: Topup.js:44 ~ axios.post ~ error:", error);
+      });
+  };
+
   return (
     <Main name="Topup">
+      {showAlert && <Alert action={false}>Success</Alert>}
       <div className="text-center">
         <p className="font-bold  text-blue-500">Available crypto balance</p>
 
@@ -51,7 +97,9 @@ export default function Topup() {
 
         <div className="w-3/6 m-2 grid grid-cols-2 gap-3 mx-auto">
           <Button onClick={openModalAdd}>Add a card</Button>
-          <Button type="warning" onClick={openModalUpdate}>Update</Button>
+          <Button type="warning" onClick={openModalUpdate}>
+            Update
+          </Button>
         </div>
 
         <div className="w-2/4 mx-auto my-5 rounded py-6 bg-slate-800 border-t border-slate-700">
@@ -60,16 +108,17 @@ export default function Topup() {
 
             <select className="w-full">
               <option value="">Select a card</option>
-              {cardsList.map((card, i) => {
-                let number = card.number;
-                number = number.substr(number.length - 5);
-                number = `***********${number}`;
-                return (
-                  <option key={i} value={`${card.number}`}>
-                    {number}
-                  </option>
-                );
-              })}
+              {cardsList.length > 0 &&
+                cardsList.map((card, i) => {
+                  let number = card.number;
+                  number = number.substr(number.length - 5);
+                  number = `***********${number}`;
+                  return (
+                    <option key={i} value={`${card.number}`}>
+                      {number}
+                    </option>
+                  );
+                })}
             </select>
           </div>
 
@@ -88,7 +137,32 @@ export default function Topup() {
         title="Add a new card"
         action={statusModalAdd}
         closeHandle={closeModalAdd}
-      ></Modal>
+      >
+        <p className="text-center text-7xl my-10">
+          <FontAwesomeIcon icon={faCreditCard} className="text-slate-200 " />
+        </p>
+        <form onSubmit={insertNewCard}>
+          <div className="w-3/4 mx-auto my-3">
+            <p className="text-left font-bold text-slate-400">Number</p>
+            <InputText name="number" />
+          </div>
+          <div className="w-3/4 mx-auto my-3">
+            <p className="text-left font-bold text-slate-400">CVC</p>
+            <InputText name="cvc" />
+          </div>
+          <div className="w-3/4 mx-auto my-3">
+            <p className="text-left font-bold text-slate-400">Expiry Year</p>
+            <InputText name="expiryYear" />
+          </div>
+          <div className="w-3/4 mx-auto my-3">
+            <p className="text-left font-bold text-slate-400">Expiry Month</p>
+            <InputText name="expiryMonth" />
+          </div>
+          <div className="w-1/4 mt-4 mx-auto">
+            <Button type="submit">Save</Button>
+          </div>
+        </form>
+      </Modal>
       {/* Update or remove a card */}
       <Modal
         title="Update/Remove  card"

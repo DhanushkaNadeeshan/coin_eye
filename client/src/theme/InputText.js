@@ -1,4 +1,4 @@
-export default function InputText({ onChange, value, defualtValue }) {
+export default function InputText({ onChange, value, defualtValue ,name=''}) {
   const style = `
         w-full
         border-b-2
@@ -15,6 +15,7 @@ export default function InputText({ onChange, value, defualtValue }) {
       onChange={onChange}
       defaultValue={defualtValue}
       value={value}
+      name={name}
     ></input>
   );
 }

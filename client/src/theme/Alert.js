@@ -1,11 +1,16 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
-export default function Alert({ children, action = true, closeHandle, confirmHandle }) {
-
-    if (action) {
-        return (
-            <div className="
+export default function Alert({
+  children,
+  action = true,
+  closeHandle,
+  confirmHandle,
+}) {
+  if (action) {
+    return (
+      <div
+        className="
             fixed 
             bottom-6 
             right-4
@@ -17,13 +22,17 @@ export default function Alert({ children, action = true, closeHandle, confirmHan
             border-orange-500 
             bg-orange-900
             text-slate-200
-            z-5">
+            z-30"
+      >
+        <p className="font-bold">
+          {" "}
+          <FontAwesomeIcon icon={faTriangleExclamation} />
+        </p>
+        {children}
 
-                <p className="font-bold">  <FontAwesomeIcon icon={faTriangleExclamation} /></p>
-                {children}
-
-                <div className='flex justify-end'>
-                    <button className="
+        <div className="flex justify-end">
+          <button
+            className="
                     mx-2 
                     font-bold
                     text-blue-300 
@@ -33,9 +42,12 @@ export default function Alert({ children, action = true, closeHandle, confirmHan
                     text-sm
                     rounded-full 
                     "
-                        onClick={confirmHandle}
-                    >Confirm</button>
-                    <button className="
+            onClick={confirmHandle}
+          >
+            Confirm
+          </button>
+          <button
+            className="
                     text-sm
                     mx-2 
                     font-bold 
@@ -45,11 +57,38 @@ export default function Alert({ children, action = true, closeHandle, confirmHan
                     px-3
                     rounded-full
                     "
-                        onClick={closeHandle}
-                    >Cancel</button>
-                </div>
-
-            </div>
-        )
-    }
+            onClick={closeHandle}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  } else {
+    // return just notification only
+    return (
+      <div
+        className="
+            fixed 
+            bottom-0 
+            right-4
+            w-96
+            px-5 
+            py-3 
+            rounded
+            border-2
+            border-green-500 
+            bg-green-900
+            text-slate-200
+            slide-top
+            z-30"
+      >
+        <p className="font-bold">
+          {" "}
+          <FontAwesomeIcon icon={faTriangleExclamation} />
+        </p>
+        {children}
+      </div>
+    );
+  }
 }

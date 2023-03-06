@@ -143,6 +143,8 @@ export default function Wallet() {
                   <HistoryView info={infoTX} key={i} address={walletAddress} />
                 );
               })}
+
+              {!isLoading && dataTX.length === 0 && <p className="text-slate-600 text-center">History data isn't available</p>}
           </div>
         </div>
         <div className="p-2 w-2/5">

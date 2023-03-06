@@ -35,10 +35,13 @@ export const accountSlice = createSlice({
       state.savingAccountETH = savingAccountETH;
       state.transactionAccountETH = transactionAccountETH;
     },
+    updateCard: (state, action) => {
+      state.cards = action.payload;
+    },
   },
 });
 
-export const { setWalletDetails, updateETH } = accountSlice.actions;
+export const { setWalletDetails, updateETH, updateCard } = accountSlice.actions;
 
 export const selectWalletAddress = (state) => {
   return state.account.walletAddress;
