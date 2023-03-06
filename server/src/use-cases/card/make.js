@@ -15,7 +15,7 @@ const _make = ({ dataAccess, entities }) => {
       return result;
     } catch (error) {
       console.log("🚀 ~ file: make.js:16 ~ return ~ error:", error);
-      return { msg: "user creation faild" };
+      throw new Error(error);
     }
   };
 };

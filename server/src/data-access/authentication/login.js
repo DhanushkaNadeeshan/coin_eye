@@ -16,6 +16,7 @@ const _login = ({ User ,Account }) => {
           email:user.email,
           total_USD:user.total_USD,
           t_account_USD:user.t_account_USD,
+          cards:user.cards,
           account:account
         }
     

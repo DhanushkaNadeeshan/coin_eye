@@ -2,6 +2,7 @@ const _make = (usecaseMake) => {
   return async (req, res) => {
     try {
       const body = req.body;
+      console.log("🚀 ~ file: make.js:5 ~ return ~ body:", body)
       const result = await usecaseMake(body);
       res.json({ success: true, result });
     } catch (error) {
