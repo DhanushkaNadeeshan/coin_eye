@@ -1,9 +1,5 @@
 const _update = () => {
   return function _update({ id, name, email, securityQuestion, anwser }) {
-    if (!email) {
-      throw new Error("Please insert mail");
-    }
-
     if (!id) {
       throw new Error("Please insert mail");
     }

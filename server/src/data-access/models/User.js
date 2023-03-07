@@ -44,6 +44,24 @@ const UserSchema = new Schema({
     type: Number,
     default: 0,
   },
+  accessibility: {
+    status: {
+      type: String,
+      default: "active",
+    },
+    blockEndDate: {
+      type: String,
+      default: "0",
+    },
+    reason: {
+      type: String,
+      default: "",
+    },
+    failedAttempt: {
+      type: Number,
+      default: 0,
+    },
+  },
   cards: [CardSchema],
 });
 
