@@ -49,10 +49,6 @@ const UserSchema = new Schema({
       type: String,
       default: "active",
     },
-    blockEndDate: {
-      type: String,
-      default: "0",
-    },
     reason: {
       type: String,
       default: "",

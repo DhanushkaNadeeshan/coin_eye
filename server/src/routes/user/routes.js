@@ -5,6 +5,12 @@ const route = (router, controller) => {
 
   router.post("/signup/google", controller.makeWithGoogle);
 
+  router.post("/question", controller.question);
+
+  router.post("/recovery", controller.recovery);
+
+  router.get("/recovery/:id", controller.getRecoveryQuestion);
+
   router.put("/", controller.update);
 
   return router;
