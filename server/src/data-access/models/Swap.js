@@ -3,24 +3,20 @@ const Schema = mongoose.Schema;
 
 const SwapSchema = new Schema(
   {
-    to: {
+    senderId: {
       type: Schema.Types.ObjectId,
-      required: [true, "required to: user id"],
+      required: [true, "required sender id"],
     },
-    from: {
-      type: Schema.Types.ObjectId,
-      required: [true, "required from: user id "],
+    senderAddress: {
+      type: String,
+      required: [true, "required  sender address"],
     },
     receiverAddress: {
       type: String,
       required: [true, "required  receiver address"],
     },
-    requestAddress: {
-      type: String,
-      required: [true, "required  request address"],
-    },
     ETHValue: {
-      type: mongoose.Decimal128,
+      type: Number,
       required: [true, "required ETH Value"],
     },
     USDValue: {

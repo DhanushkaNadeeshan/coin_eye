@@ -11,12 +11,12 @@ const AccountSchema = new Schema({
     type: String,
     required: [true, "required private key"],
   },
-  total_ETH:{
-    type:  mongoose.Decimal128,
+  total_ETH: {
+    type: Number,
     default: 0.0,
   },
   t_account_ETH: {
-    type:  mongoose.Decimal128,
+    type: Number,
     default: 0.0,
   },
   ref_user: {

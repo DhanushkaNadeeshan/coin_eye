@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-
 const account = require("./account");
 router.use("/account", account);
 
@@ -17,5 +16,7 @@ router.use("/card", card);
 const transaction = require("./transaction");
 router.use("/transaction", transaction);
 
+const swap = require("./swap");
+router.use("/swap", swap);
 
 module.exports = router;

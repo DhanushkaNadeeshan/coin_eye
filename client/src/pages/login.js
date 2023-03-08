@@ -33,8 +33,8 @@ export default function Login() {
   }, []);
 
   const createSavingAccountBalance = (total, transactionBalance) => {
-    total = parseFloat(total.$numberDecimal);
-    transactionBalance = parseFloat(transactionBalance.$numberDecimal);
+    total = parseFloat(total);
+    transactionBalance = parseFloat(transactionBalance);
     return total == 0 ? 0 : total - transactionBalance;
   };
 
@@ -73,8 +73,8 @@ export default function Login() {
             cards: cards,
             wallet_address: wallet_address,
             s_account_USD: usdSavingBalance,
-            totalETH: parseFloat(total_ETH.$numberDecimal),
-            t_accountETH: parseFloat(t_account_ETH.$numberDecimal),
+            totalETH: parseFloat(total_ETH),
+            t_accountETH: parseFloat(t_account_ETH),
             s_accountETH: createSavingAccountBalance(total_ETH, t_account_ETH),
           };
 
