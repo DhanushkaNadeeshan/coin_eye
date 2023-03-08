@@ -3,6 +3,7 @@ import { faDownLong, faUpLong } from "@fortawesome/free-solid-svg-icons";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { useSelector } from "react-redux";
+import { convertUSD } from "../utils/app";
 // custom
 import Main from "./Main";
 import HistoryView from "./HistoryView";
@@ -104,17 +105,17 @@ export default function Wallet() {
             ></img>
             {/* showing grand total in balance */}
             <p className="text-slate-200 text-xl">
-              {USDBalance.totalUSD} <samp className="text-amber-200">USD</samp>
+              {convertUSD(USDBalance.totalUSD)} <samp className="text-amber-200">USD</samp>
             </p>
           </div>
           {/* show account details */}
           <div className="flex justify-between text-slate-500">
             <p>Transaction account</p>
-            <p>{USDBalance.transactionAccountUSD} (USD)</p>
+            <p>{convertUSD(USDBalance.transactionAccountUSD)} (USD)</p>
           </div>
           <div className="flex justify-between text-slate-500">
             <p>Saving account</p>
-            <p>{USDBalance.savingAccountUSD} (USD)</p>
+            <p>{convertUSD(USDBalance.savingAccountUSD)} (USD)</p>
           </div>
           <div className="mt-8 flex justify-around font-bold">
             <div>
