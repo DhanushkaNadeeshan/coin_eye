@@ -5,12 +5,13 @@ const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { ethers } = require("ethers");
-const INFURA_ID = process.env.INFURA_ID;
 
-const provider = new ethers.providers.InfuraProvider("goerli", INFURA_ID);
+const { getProvider } = require("./util/wallet");
 
 const { connectToDb } = require("./config/database");
 const { onBlockCallback } = require("./util/listen");
+
+const provider = getProvider();
 
 // const { getAllWalletAddress } = require("./controllers/account");
 
