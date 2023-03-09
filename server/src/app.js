@@ -65,8 +65,17 @@ global.socketIO.on("connection", (socket) => {
   }
 
   socket.on("disconnect", (rs) => {
-    // TODO: delete the login user
-    console.log("disconnect", socket.id);
+  
+    const sid = socket.id;
+
+    for (let key in global.onlineUsers) {
+      if (global.onlineUsers[key] === sid) {
+        delete global.onlineUsers[key];
+        break;
+      }
+    }
+
+    console.log("disconnect", sid);
   });
 
   socket.on("message", (message) => {
