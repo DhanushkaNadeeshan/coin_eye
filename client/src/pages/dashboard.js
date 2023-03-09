@@ -58,7 +58,7 @@ export default function Dashboard() {
   }, []);
 
   const logout = () => {
-    axios.get("/api/logout").then(({ data }) => {
+    axios.post("/api/authentication/logout").then(({ data }) => {
       if (data.success) {
         window.location.href = "/login";
       }
@@ -73,7 +73,13 @@ export default function Dashboard() {
         if (data.success) {
           let { savingAccountETH, transactionAccountETH } = ETHBalance;
           savingAccountETH = data.balance - transactionAccountETH;
-          dispatch(updateETH({ totalETH: data.balance, savingAccountETH ,transactionAccountETH }));
+          dispatch(
+            updateETH({
+              totalETH: data.balance,
+              savingAccountETH,
+              transactionAccountETH,
+            })
+          );
         }
       })
       .catch((err) => console.log(err));

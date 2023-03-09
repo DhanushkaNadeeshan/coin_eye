@@ -56,12 +56,12 @@ app.use("/api", api);
 
 // socket handling
 global.socketIO.on("connection", (socket) => {
-  const address = socket.handshake.query.address;
+  const walletAddress = socket.handshake.query.address;
 
   console.log(`⚡: ${socket.id} user just connected!`);
 
-  if (address) {
-    global.onlineUsers[address] = socket.id;
+  if (walletAddress) {
+    global.onlineUsers[walletAddress] = socket.id;
   }
 
   socket.on("disconnect", (rs) => {
