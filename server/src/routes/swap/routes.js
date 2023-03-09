@@ -5,6 +5,8 @@ const route = (router, controller) => {
 
   router.get("/:address", controller.view);
 
+  router.put("/ETH/request", controller.update);
+
   return router;
 };
 

@@ -1,4 +1,5 @@
 const { usecaseMake } = require("../use-cases/transaction");
+const { sendAlert } = require("./alert");
 
 function onBlockCallback(ethers, provider, blockNumber) {
   provider
@@ -31,7 +32,7 @@ function onBlockCallback(ethers, provider, blockNumber) {
                 usecaseMake(transactionObject)
                   .then((rs) => {
                     // notify wallet owner if he is online
-                    sendAlert(tx.to, "update.balance.ETH");
+                    sendAlert(tx.to, "listen.update.balance.ETH");
                   })
                   .catch((err) => console.log(err));
               }

@@ -19,4 +19,7 @@ router.use("/transaction", transaction);
 const swap = require("./swap");
 router.use("/swap", swap);
 
+const notification = require("./notification");
+router.use("/notification", notification);
+
 module.exports = router;

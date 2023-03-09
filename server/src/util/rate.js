@@ -16,4 +16,17 @@ const getRate = () => {
   });
 };
 
+// const getReduceNumber = (currentAmount, amount) => {
+//   let [int, dec] = `${amount}`.split(".");
+
+//   let numberOfDecimal = dec.length - 2;
+
+//   amount = [...int, ...dec];
+//   amount = amount.join("");
+//   amount = parseInt(amount);
+
+//   currentAmount = currentAmount * numberOfDecimal;
+
+//   return currentAmount - amount;
+// };
 module.exports = { getRate };

@@ -21,18 +21,18 @@ function newWallet() {
   return response;
 }
 
-function sendEther(amount, senderPrivateKey, receiverAddress, callback) {
+function sendEther(amount, receiverPrivateKey, senderAddress, callback) {
   return new Promise(async (resolve, reject) => {
     try {
       const provider = getProvider();
-      const wallet = new ethers.Wallet(senderPrivateKey, provider);
+      const wallet = new ethers.Wallet(receiverPrivateKey, provider);
 
       const tx = await wallet.sendTransaction({
-        to: receiverAddress,
+        to: senderAddress,
         value: ethers.utils.parseEther(amount),
       });
 
-      resolve("proccesing");
+      resolve("procesing");
 
       await tx.wait();
       callback();

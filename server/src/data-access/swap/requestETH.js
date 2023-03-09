@@ -1,4 +1,4 @@
-const _requestETH = ({ User, Swap, sendAlert }) => {
+const _requestETH = ({ User, Swap, sendAlert, dataAccessNotification }) => {
   return (info) => {
     const { amount, USDRate, ...swapObj } = info;
 
@@ -24,7 +24,36 @@ const _requestETH = ({ User, Swap, sendAlert }) => {
 
         await user.save();
 
-        sendAlert(swapObj.receiverAddress, "request.balance.ETH");
+        // create log informations
+        const notificationSender = {
+          type: "swap",
+          description: `request ${swapObj.ETHValue} (ETH) to ${swapObj.receiverAddress}`,
+          refUser: swapObj.senderId,
+          ref: [
+            {
+              id: result._id,
+              document: "swaps",
+            },
+          ],
+        };
+
+        dataAccessNotification.make(notificationSender);
+
+        const notificationReceiver = {
+          address: swapObj.receiverAddress,
+          type: "swap",
+          description: `request ${swapObj.ETHValue} (ETH) from ${swapObj.senderAddress}`,
+          ref: [
+            {
+              id: result._id,
+              document: "swaps",
+            },
+          ],
+        };
+        
+        dataAccessNotification.findByAddressAndMake(notificationReceiver);
+
+        sendAlert(swapObj.receiverAddress, "swap.request.balance.ETH");
 
         resolve(result);
       } catch (error) {
