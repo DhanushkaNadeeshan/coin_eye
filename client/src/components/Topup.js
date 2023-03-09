@@ -168,7 +168,50 @@ export default function Topup() {
         title="Update/Remove  card"
         action={statusModalUpdate}
         closeHandle={closeModalUpdate}
-      ></Modal>
+      >
+        <p className="text-center text-7xl my-10">
+          <FontAwesomeIcon icon={faCreditCard} className="text-slate-200 " />
+        </p>
+
+        <div className="w-3/4 mx-auto my-3">
+          <p className="text-left font-bold text-slate-400">Number</p>
+
+          <select className="w-full border-b-2 bg-inherit text-slate-200 border-slate-500 px-2 focus:outline-none focus:border-sky-500">
+            <option value="" className="text-slate-900 bg-slate-500">Select a card</option>
+            {cardsList.length > 0 &&
+              cardsList.map((card, i) => {
+                let number = card.number;
+                number = number.substr(number.length - 5);
+                number = `***********${number}`;
+                return (
+                  <option key={i} value={`${card.number}`} className="text-slate-900 bg-slate-500">
+                    {number}
+                  </option>
+                );
+              })}
+          </select>
+        </div>
+        <div className="w-3/4 mx-auto my-3">
+          <p className="text-left font-bold text-slate-400">CVC</p>
+          <InputText name="cvc" />
+        </div>
+        <div className="w-3/4 mx-auto my-3">
+          <p className="text-left font-bold text-slate-400">Expiry Year</p>
+          <InputText name="expiryYear" />
+        </div>
+        <div className="w-3/4 mx-auto my-3">
+          <p className="text-left font-bold text-slate-400">Expiry Month</p>
+          <InputText name="expiryMonth" />
+        </div>
+        <div className="w-3/4 flex mt-4 mx-auto">
+          <div className="w-1/2 p-2">
+            <Button type="error">Remove</Button>
+          </div>
+          <div className="w-1/2 p-2">
+            <Button type="warning">Update</Button>
+          </div>
+        </div>
+      </Modal>
     </Main>
   );
 }
