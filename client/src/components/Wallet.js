@@ -18,40 +18,38 @@ import useTransactionAPI from "../hooks/transaction";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const data = {
-  labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
-
 export default function Wallet() {
   const walletAddress = useSelector(selectWalletAddress);
   const ETHBalance = useSelector(selectETHBalance);
   const USDBalance = useSelector(selectUSDBalance);
 
+  const dataETH = {
+    labels: ["Transaction Account" ,"Saving Account", ],
+    datasets: [
+      {
+        label: "# ETH",
+        data: [ETHBalance.transactionAccountETH, ETHBalance.savingAccountETH],
+        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)"],
+        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataUsd = {
+    labels: ["Transaction Account" ,"Saving Account", ],
+    datasets: [
+      {
+        label: "$",
+        data: [convertUSD(USDBalance.transactionAccountUSD), convertUSD(USDBalance.savingAccountUSD)],
+        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)"],
+        borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
   const { dataTX, isLoading } = useTransactionAPI(walletAddress);
- 
 
   return (
     <Main name="Wallet">
@@ -105,7 +103,8 @@ export default function Wallet() {
             ></img>
             {/* showing grand total in balance */}
             <p className="text-slate-200 text-xl">
-              {convertUSD(USDBalance.totalUSD)} <samp className="text-amber-200">USD</samp>
+              {convertUSD(USDBalance.totalUSD)}{" "}
+              <samp className="text-amber-200">USD</samp>
             </p>
           </div>
           {/* show account details */}
@@ -137,7 +136,9 @@ export default function Wallet() {
         <div className="p-2 w-3/5">
           <p className="font-bold text-slate-200">History</p>
           <div className="py-3">
-            {isLoading && <p className="text-slate-400 text-center">Loading TX...</p>}
+            {isLoading && (
+              <p className="text-slate-400 text-center">Loading TX...</p>
+            )}
             {!isLoading &&
               dataTX.map((infoTX, i) => {
                 return (
@@ -145,12 +146,23 @@ export default function Wallet() {
                 );
               })}
 
-              {!isLoading && dataTX.length === 0 && <p className="text-slate-600 text-center">History data isn't available</p>}
+            {!isLoading && dataTX.length === 0 && (
+              <p className="text-slate-600 text-center">
+                History data isn't available
+              </p>
+            )}
           </div>
         </div>
         <div className="p-2 w-2/5">
           <p className="font-bold text-slate-200 text-center">Statistic</p>
-          <Pie data={data} />
+          <div className="w-4/6 mx-auto my-2 p-2 rounded border border-blue-600">
+            <p className="font-bold text-slate-200 text-center">ETH</p>
+            <Pie data={dataETH} />
+          </div>
+          <div className="w-4/6 mx-auto my-2 p-2  rounded border  border-yellow-600">
+            <p className="font-bold text-slate-200 text-center">USD</p>
+            <Pie data={dataUsd} />
+          </div>
         </div>
       </div>
     </Main>
