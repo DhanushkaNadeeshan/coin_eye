@@ -35,13 +35,46 @@ export const accountSlice = createSlice({
       state.savingAccountETH = savingAccountETH;
       state.transactionAccountETH = transactionAccountETH;
     },
-    updateCard: (state, action) => {
+    updateUSD: (state, action) => {
+      const payload = action.payload;
+      state.totalUSD = payload.totalUSD;
+      state.savingAccountUSD = payload.savingAccountUSD;
+      state.transactionAccountUSD = payload.transactionAccountUSD;
+    },
+    addCard: (state, action) => {
       state.cards = action.payload;
+    },
+    updateCard: (state, action) => {
+      const { _id, number, cvc, expiryMonth, expiryYear } = action.payload;
+
+      const tempCardList = [...state.cards];
+      const cardIndex = tempCardList.findIndex((data) => data._id === _id);
+
+      if (cardIndex != -1) {
+        tempCardList[cardIndex].number = number;
+        tempCardList[cardIndex].cvc = cvc;
+        tempCardList[cardIndex].expiryMonth = expiryMonth;
+        tempCardList[cardIndex].expiryYear = expiryYear;
+        state.cards = tempCardList;
+      }
+    },
+    deleteCard: (state, action) => {
+      const { id } = action.payload;
+      let tempCardList = [...state.cards];
+      tempCardList = tempCardList.filter((data) => data._id !== id);
+      state.cards = tempCardList;
     },
   },
 });
 
-export const { setWalletDetails, updateETH, updateCard } = accountSlice.actions;
+export const {
+  setWalletDetails,
+  updateETH,
+  updateCard,
+  deleteCard,
+  addCard,
+  updateUSD,
+} = accountSlice.actions;
 
 export const selectWalletAddress = (state) => {
   return state.account.walletAddress;

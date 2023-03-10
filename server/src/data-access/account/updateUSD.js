@@ -39,7 +39,10 @@ const _updateSavingBalanceUSD = ({ User, stripe }) => {
 
         let rs = await user.save();
 
-        resolve({ totalUSD: user.total_USD });
+        resolve({
+          totalUSD: user.total_USD,
+          transactionAccountUSD: user.t_account_USD,
+        });
       } catch (error) {
         reject(error);
       }

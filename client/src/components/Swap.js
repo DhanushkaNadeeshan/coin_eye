@@ -14,6 +14,7 @@ import {
   selectETHBalance,
   selectUSDBalance,
 } from "../utils/slice/accountSlice";
+import { convertUSD } from "../utils/app";
 
 export default function Swap() {
   const ETHBalance = useSelector(selectETHBalance);
@@ -53,11 +54,11 @@ export default function Swap() {
             <p className="font-bold  text-blue-500">Available usd balance</p>
             <div className="flex justify-between text-slate-500">
               <p>Transaction account</p>
-              <p>{USDBalance.transactionAccountUSD} (USD)</p>
+              <p>{convertUSD(USDBalance.transactionAccountUSD)} (USD)</p>
             </div>
             <div className="flex justify-between text-slate-500">
               <p>Saving account</p>
-              <p>{USDBalance.savingAccountUSD} (USD)</p>
+              <p>{convertUSD(USDBalance.savingAccountUSD)} (USD)</p>
             </div>
           </div>
         </div>

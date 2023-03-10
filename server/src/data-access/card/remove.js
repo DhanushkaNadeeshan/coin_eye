@@ -7,7 +7,7 @@ const _remove = ({ User }) => {
         { new: true }
       )
         .then((rs) => {
-          resolve(rs.cards);
+          resolve({ id });
         })
         .catch((error) => {
           reject(error);

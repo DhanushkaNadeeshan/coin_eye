@@ -6,7 +6,7 @@ const route = (router, controller) => {
 
   router.put("/ETH/transaction", controller.updateTransactionETHController);
 
-  router.put("/USD/saving", controller.updateSavingUSDController);
+  router.put("/USD/topup", controller.updateSavingUSDController);
 
   router.put("/USD/transaction", controller.updateTransactionUSDController);
 

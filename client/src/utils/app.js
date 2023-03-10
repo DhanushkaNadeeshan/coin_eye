@@ -1,5 +1,4 @@
 const convertUSD = (usd) => {
-  
   if (usd === 0) {
     return usd;
   }
@@ -13,4 +12,14 @@ const convertUSD = (usd) => {
   return usd;
 };
 
-module.exports = { convertUSD };
+const convertUSDWithoutDecimal = (usd) => {
+  let [int, dec] = usd.split(".");
+  let tempAmount = [...int, ...dec];
+
+  tempAmount = tempAmount.join("");
+  tempAmount = parseInt(tempAmount);
+
+  return tempAmount;
+};
+
+module.exports = { convertUSD, convertUSDWithoutDecimal };

@@ -5,7 +5,11 @@ const _updateSavingBalanceUSD = () => {
     }
 
     if (!amount) {
-      throw new Error("Please insert balance");
+      throw new Error("Please insert amount");
+    }
+
+    if (!number) {
+      throw new Error("Please insert number");
     }
 
     return Object.freeze({

@@ -8,7 +8,7 @@ const _remove = ({ dataAccess, entities }) => {
     } catch (error) {
       console.log("🚀 ~ file: view.js:8 ~ view ~ error:", error);
 
-      return { msg: "come from error" };
+      throw new Error(error);
     }
   };
 };

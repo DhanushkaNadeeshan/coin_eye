@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Main from "./Main";
 import Button from "../theme/Button";
 import Modal from "../theme/Modal";
@@ -6,20 +6,26 @@ import InputText from "../theme/InputText";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCards } from "../utils/slice/accountSlice";
 import { selectUser } from "../utils/slice/userSlice";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { updateCard } from "../utils/slice/accountSlice";
+import { updateUSD, selectUSDBalance } from "../utils/slice/accountSlice";
 import Alert from "../theme/Alert";
+import UpdateCard from "./card/UpdateCard";
+import AddCard from "./card/AddCard";
+import { convertUSD, convertUSDWithoutDecimal } from "../utils/app";
+import Loader from "../theme/Loader";
 
 export default function Topup() {
   const dispatch = useDispatch();
   const cardsList = useSelector(selectCards);
   const userSelector = useSelector(selectUser);
+  const USDBalance = useSelector(selectUSDBalance);
 
+  const [number, setNubmer] = useState("");
+  const [amount, setAmount] = useState(0);
   const [statusModalAdd, setStatusModalAdd] = useState(false);
   const [statusModalUpdate, setStatusModalUpdate] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const closeModalAdd = () => {
     setStatusModalAdd(false);
@@ -34,6 +40,22 @@ export default function Topup() {
     setStatusModalUpdate(true);
   };
 
+  const setUSDAmount = (value) => {
+    const numberRegex = /^\d+(?:\.\d+)?$/;
+    if (!numberRegex.test(value)) {
+      return setAmount("0.00");
+    }
+    let tempValue = value.split(".");
+
+    if (tempValue.length > 1) {
+      value = tempValue.join("");
+    }
+
+    value = value / 100;
+    value = value.toFixed(2);
+    setAmount(value);
+  };
+
   const alertHandler = () => {
     setShowAlert(true);
     const timer = setTimeout(() => {
@@ -43,37 +65,52 @@ export default function Topup() {
     return () => clearTimeout(timer);
   };
 
-  const insertNewCard = (e) => {
-    e.preventDefault();
+  const topUpUsd = () => {
+    let tempAmount = convertUSDWithoutDecimal(amount);
 
-    // TODO: error handling
-    const data = new FormData(e.target);
-
-    const jsonData = {};
-
-    for (const [key, value] of data.entries()) {
-      jsonData[key] = parseInt(value);
+    if (tempAmount < 500) {
+      return alert("Minimum Amout of Topup : 5$");
     }
 
-    jsonData.id = userSelector.id;
+    const sendObj = {
+      id: userSelector.id,
+      amount: tempAmount,
+      number: number,
+    };
+    // loader
+    setLoading(true);
 
     axios
-      .post("/api/card", jsonData)
+      .put("/api/account//USD/topup", sendObj)
       .then(({ data }) => {
-        setStatusModalAdd(false);
-        dispatch(updateCard(data.result));
-        alertHandler();
+        if (data.success) {
+          let { totalUSD, transactionAccountUSD } = data.result;
+
+          let updatedUSD = {
+            totalUSD,
+            transactionAccountUSD,
+            savingAccountUSD: totalUSD - transactionAccountUSD,
+          };
+
+          dispatch(updateUSD(updatedUSD));
+
+          setAmount("0.00");
+        }
       })
       .catch((error) => {
-        console.log("🚀 ~ file: Topup.js:44 ~ axios.post ~ error:", error);
+        console.log("🚀 ~ file: Topup.js:79 ~ axios.put ~ error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   return (
     <Main name="Topup">
+      {loading && <Loader />}
       {showAlert && <Alert action={false}>Success</Alert>}
       <div className="text-center">
-        <p className="font-bold  text-blue-500">Available crypto balance</p>
+        <p className="font-bold  text-blue-500">Available USD balance</p>
 
         <img
           className="w-16 mx-auto m-4"
@@ -82,17 +119,18 @@ export default function Topup() {
         ></img>
 
         <p className="text-slate-200 text-xl">
-          101,000 <samp className="text-amber-200">USD</samp>
+          {convertUSD(USDBalance.totalUSD)}{" "}
+          <samp className="text-amber-200">USD</samp>
         </p>
 
         <div className="w-2/4 flex mx-auto justify-between text-slate-500">
           <p>Transaction account</p>
-          <p>1,000</p>
+          <p>{convertUSD(USDBalance.transactionAccountUSD)}</p>
         </div>
 
         <div className="w-2/4 flex mx-auto justify-between text-slate-500">
           <p>Saving account</p>
-          <p>1,000</p>
+          <p>{convertUSD(USDBalance.savingAccountUSD)}</p>
         </div>
 
         <div className="w-3/6 m-2 grid grid-cols-2 gap-3 mx-auto">
@@ -106,15 +144,27 @@ export default function Topup() {
           <div className="w-2/4 mx-auto">
             <p className="text-left font-bold text-slate-400">Bank</p>
 
-            <select className="w-full">
-              <option value="">Select a card</option>
+            <select
+              className="w-full border-b-2 bg-inherit text-slate-200 border-slate-500 px-2 focus:outline-none focus:border-sky-500"
+              onChange={(e) => setNubmer(e.target.value)}
+            >
+              <option value="" className="text-slate-900 bg-slate-500">
+                Select a card
+              </option>
+
               {cardsList.length > 0 &&
                 cardsList.map((card, i) => {
                   let number = card.number;
+
                   number = number.substr(number.length - 5);
                   number = `***********${number}`;
+
                   return (
-                    <option key={i} value={`${card.number}`}>
+                    <option
+                      key={i}
+                      value={`${card.number}`}
+                      className="text-slate-900 bg-slate-500"
+                    >
                       {number}
                     </option>
                   );
@@ -124,11 +174,16 @@ export default function Topup() {
 
           <div className="w-2/4 mx-auto">
             <p className="text-left font-bold text-slate-400">Amount</p>
-            <InputText />
+            <InputText
+              value={amount}
+              onChange={(e) => setUSDAmount(e.target.value)}
+              className="text-right"
+              css="text-right"
+            ></InputText>
           </div>
 
           <div className="w-1/4 mt-4 mx-auto">
-            <Button>Topup</Button>
+            <Button onClick={topUpUsd}>Topup</Button>
           </div>
         </div>
       </div>
@@ -138,30 +193,11 @@ export default function Topup() {
         action={statusModalAdd}
         closeHandle={closeModalAdd}
       >
-        <p className="text-center text-7xl my-10">
-          <FontAwesomeIcon icon={faCreditCard} className="text-slate-200 " />
-        </p>
-        <form onSubmit={insertNewCard}>
-          <div className="w-3/4 mx-auto my-3">
-            <p className="text-left font-bold text-slate-400">Number</p>
-            <InputText name="number" />
-          </div>
-          <div className="w-3/4 mx-auto my-3">
-            <p className="text-left font-bold text-slate-400">CVC</p>
-            <InputText name="cvc" />
-          </div>
-          <div className="w-3/4 mx-auto my-3">
-            <p className="text-left font-bold text-slate-400">Expiry Year</p>
-            <InputText name="expiryYear" />
-          </div>
-          <div className="w-3/4 mx-auto my-3">
-            <p className="text-left font-bold text-slate-400">Expiry Month</p>
-            <InputText name="expiryMonth" />
-          </div>
-          <div className="w-1/4 mt-4 mx-auto">
-            <Button type="submit">Save</Button>
-          </div>
-        </form>
+        <AddCard
+          closeModelHandle={closeModalAdd}
+          alertHandler={alertHandler}
+          userSelector={userSelector}
+        />
       </Modal>
       {/* Update or remove a card */}
       <Modal
@@ -169,48 +205,12 @@ export default function Topup() {
         action={statusModalUpdate}
         closeHandle={closeModalUpdate}
       >
-        <p className="text-center text-7xl my-10">
-          <FontAwesomeIcon icon={faCreditCard} className="text-slate-200 " />
-        </p>
-
-        <div className="w-3/4 mx-auto my-3">
-          <p className="text-left font-bold text-slate-400">Number</p>
-
-          <select className="w-full border-b-2 bg-inherit text-slate-200 border-slate-500 px-2 focus:outline-none focus:border-sky-500">
-            <option value="" className="text-slate-900 bg-slate-500">Select a card</option>
-            {cardsList.length > 0 &&
-              cardsList.map((card, i) => {
-                let number = card.number;
-                number = number.substr(number.length - 5);
-                number = `***********${number}`;
-                return (
-                  <option key={i} value={`${card.number}`} className="text-slate-900 bg-slate-500">
-                    {number}
-                  </option>
-                );
-              })}
-          </select>
-        </div>
-        <div className="w-3/4 mx-auto my-3">
-          <p className="text-left font-bold text-slate-400">CVC</p>
-          <InputText name="cvc" />
-        </div>
-        <div className="w-3/4 mx-auto my-3">
-          <p className="text-left font-bold text-slate-400">Expiry Year</p>
-          <InputText name="expiryYear" />
-        </div>
-        <div className="w-3/4 mx-auto my-3">
-          <p className="text-left font-bold text-slate-400">Expiry Month</p>
-          <InputText name="expiryMonth" />
-        </div>
-        <div className="w-3/4 flex mt-4 mx-auto">
-          <div className="w-1/2 p-2">
-            <Button type="error">Remove</Button>
-          </div>
-          <div className="w-1/2 p-2">
-            <Button type="warning">Update</Button>
-          </div>
-        </div>
+        <UpdateCard
+          cardsList={cardsList}
+          closeModelHandle={closeModalUpdate}
+          alertHandler={alertHandler}
+          user={userSelector}
+        />
       </Modal>
     </Main>
   );

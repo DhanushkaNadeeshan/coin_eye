@@ -1,4 +1,10 @@
-export default function InputText({ onChange, value, defualtValue ,name=''}) {
+export default function InputText({
+  onChange,
+  value,
+  defualtValue,
+  name = "",
+  css = "",
+}) {
   const style = `
         w-full
         border-b-2
@@ -8,6 +14,7 @@ export default function InputText({ onChange, value, defualtValue ,name=''}) {
         px-2
         focus:outline-none
         focus:border-sky-500
+        ${css}
     `;
   return (
     <input

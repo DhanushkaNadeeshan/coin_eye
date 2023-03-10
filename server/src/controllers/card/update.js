@@ -5,6 +5,7 @@ const _update = (usecaseUpdate) => {
       const result = await usecaseUpdate(body);
       res.json({ success: true, result });
     } catch (error) {
+      console.log("🚀 ~ file: update.js:8 ~ return ~ error:", error)
       // TODO: make error stander
       res.status(400).json({ msg: "viewing error" });
     }

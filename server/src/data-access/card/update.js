@@ -15,7 +15,7 @@ const _update = ({ User }) => {
         }
       )
         .then((rs) => {
-          resolve(cardInfo);
+          resolve({ ...cardInfo, _id: id });
         })
         .catch((error) => {
           reject(error);
