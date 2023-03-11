@@ -14,6 +14,7 @@ import {
   selectWalletAddress,
 } from "../utils/slice/accountSlice";
 
+
 import useTransactionAPI from "../hooks/transaction";
 import Modal from "../theme/Modal";
 import TopupETH from "./stage-tx/TopupETH";
@@ -25,6 +26,7 @@ export default function Wallet() {
   const walletAddress = useSelector(selectWalletAddress);
   const ETHBalance = useSelector(selectETHBalance);
   const USDBalance = useSelector(selectUSDBalance);
+
 
   const [statusModalTopupETH, setStatusModalTopupETH] = useState(false);
   const [statusModalCashoutETH, setStatusModalCashoutETH] = useState(false);
@@ -239,7 +241,8 @@ export default function Wallet() {
         action={statusModalTopupETH}
         closeHandle={closeModalTopupETH}
       >
-        <TopupETH />
+        {/* <Question/> */}
+        <TopupETH  />
       </Modal>
       {/* Topup USD */}
       <Modal

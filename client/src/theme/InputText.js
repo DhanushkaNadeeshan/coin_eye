@@ -23,6 +23,7 @@ export default function InputText({
       defaultValue={defualtValue}
       value={value}
       name={name}
+      autoComplete="off"
     ></input>
   );
 }

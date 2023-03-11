@@ -10,8 +10,6 @@ const _question = ({ User }) => {
           user.accessibility.status = "block";
           user.accessibility.reason = "unable to give right anwser";
 
-          await user.save();
-
           return resolve({
             success: false,
             msg: "exceaded attempt",
@@ -29,12 +27,26 @@ const _question = ({ User }) => {
         } else {
           user.accessibility.failedAttempt++;
 
+          if (user.accessibility.failedAttempt === 3) {
+            user.accessibility.status = "block";
+            user.accessibility.reason = "unable to give right anwser";
+
+            await user.save();
+
+            return resolve({
+              success: false,
+              msg: "exceaded attempt",
+              status: "block",
+            });
+          }
+
           await user.save();
 
           return resolve({
             success: false,
             msg: "anwser or question is not valide",
             status: "try",
+            failedAttempt: user.accessibility.failedAttempt,
           });
         }
       } catch (error) {

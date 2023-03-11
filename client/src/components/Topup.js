@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Main from "./Main";
 import Button from "../theme/Button";
 import Modal from "../theme/Modal";
@@ -21,7 +21,7 @@ export default function Topup() {
   const USDBalance = useSelector(selectUSDBalance);
 
   const [number, setNubmer] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("0.00");
   const [statusModalAdd, setStatusModalAdd] = useState(false);
   const [statusModalUpdate, setStatusModalUpdate] = useState(false);
   const [showAlert, setShowAlert] = useState(false);

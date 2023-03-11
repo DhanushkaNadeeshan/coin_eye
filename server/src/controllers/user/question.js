@@ -3,7 +3,8 @@ const _question = (usecaseQuestion) => {
     try {
       const body = req.body;
       const result = await usecaseQuestion(body);
-      res.json({ success: true, result });
+      console.log("🚀 ~ file: question.js:6 ~ return ~ result:", result);
+      res.status(200).json({ result });
     } catch (error) {
       // TODO: make error stander
       res.status(400).json({ msg: "viewing error" });
