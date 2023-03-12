@@ -1,4 +1,10 @@
-const _requestETH = ({ User, Swap, sendAlert, dataAccessNotification }) => {
+const _requestETH = ({
+  User,
+  Swap,
+  sendAlert,
+  dataAccessNotification,
+  Account,
+}) => {
   return (info) => {
     const { amount, USDRate, ...swapObj } = info;
 
@@ -6,6 +12,17 @@ const _requestETH = ({ User, Swap, sendAlert, dataAccessNotification }) => {
       try {
         let user = await User.findOne({ _id: swapObj.senderId });
 
+        if (!user) {
+          return reject("sender can't find");
+        }
+
+        let receiveUser = await Account.findOne({
+          wallet_address: swapObj.receiverAddress,
+        });
+
+        if (!receiveUser) {
+          return reject("requested user can't find");
+        }
         //   calculate usd value of requested ETH amount
         let usdValueOfETH = amount * USDRate;
         usdValueOfETH = usdValueOfETH.toFixed(2);
@@ -50,7 +67,7 @@ const _requestETH = ({ User, Swap, sendAlert, dataAccessNotification }) => {
             },
           ],
         };
-        
+
         dataAccessNotification.findByAddressAndMake(notificationReceiver);
 
         sendAlert(swapObj.receiverAddress, "swap.request.balance.ETH");

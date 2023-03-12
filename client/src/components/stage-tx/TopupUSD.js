@@ -1,49 +1,62 @@
 import { useState } from "react";
 import Question from "./Question";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectWalletAddress,
-  selectETHBalance,
-  updateETH,
-} from "../../utils/slice/accountSlice";
-
+import { selectUSDBalance, updateUSD } from "../../utils/slice/accountSlice";
+import { selectUser } from "../../utils/slice/userSlice";
 import Button from "../../theme/Button";
 import InputText from "../../theme/InputText";
 import axios from "axios";
+import { convertUSD, convertUSDWithoutDecimal } from "../../utils/app";
 
 export default function TopupETH({ closeModal }) {
-  const walletAddress = useSelector(selectWalletAddress);
-  const savingAccountETHSelector = useSelector(selectETHBalance);
+  const userSelector = useSelector(selectUser);
+  const usdBalanceSelector = useSelector(selectUSDBalance);
   const dispatch = useDispatch();
 
   const [viewQuestion, setViewQuestion] = useState(true);
-  const [amount, setAmount] = useState("0");
+  const [amount, setAmount] = useState("0.00");
 
   const close = () => {
     closeModal();
   };
 
+  const setUSDAmount = (value) => {
+    const numberRegex = /^\d+(?:\.\d+)?$/;
+    if (!numberRegex.test(value)) {
+      return setAmount("0.00");
+    }
+    let tempValue = value.split(".");
+
+    if (tempValue.length > 1) {
+      value = tempValue.join("");
+    }
+
+    value = value / 100;
+    value = value.toFixed(2);
+    setAmount(value);
+  };
+
   const makeTx = () => {
     const info = {
-      address: walletAddress,
-      amount: parseFloat(amount),
+      id: userSelector.id,
+      amount: convertUSDWithoutDecimal(amount),
       status: "add",
     };
 
-    const url = `/api/account/ETH/transaction`;
+    const url = `/api/account/USD/transaction`;
     axios
       .put(url, info)
       .then(({ data }) => {
         if (data.success) {
-          const { totalETH, transactionETHBalance } = data.result;
+          const { totalUSD, transactionUSDBalance } = data.result;
 
           const updatedinfo = {
-            totalETH: totalETH,
-            savingAccountETH: totalETH - transactionETHBalance,
-            transactionAccountETH: transactionETHBalance,
+            totalUSD: totalUSD,
+            savingAccountUSD: totalUSD - transactionUSDBalance,
+            transactionAccountUSD: transactionUSDBalance,
           };
 
-          dispatch(updateETH(updatedinfo));
+          dispatch(updateUSD(updatedinfo));
           close();
         }
       })
@@ -64,12 +77,11 @@ export default function TopupETH({ closeModal }) {
           alt="downarrow"
           className="w-1/5 mx-auto animate-bounce mt-6"
         ></img>
-
         <div className="mt-8">
           <div className="w-3/4 mx-auto mt-3">
             <p className="text-left font-bold text-slate-400">Available ETH</p>
             <p className="text-slate-400 text-right text-xl">
-              {savingAccountETHSelector.savingAccountETH}{" "}
+              {convertUSD(usdBalanceSelector.savingAccountUSD)}{" "}
               <samp className="text-blue-700">ETH</samp>
             </p>
           </div>
@@ -79,7 +91,7 @@ export default function TopupETH({ closeModal }) {
               name="amount"
               css="text-right"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setUSDAmount(e.target.value)}
             />
           </div>
           <div className="w-1/2 my-8 mx-auto">

@@ -14,10 +14,12 @@ import {
   selectWalletAddress,
 } from "../utils/slice/accountSlice";
 
-
 import useTransactionAPI from "../hooks/transaction";
 import Modal from "../theme/Modal";
 import TopupETH from "./stage-tx/TopupETH";
+import CashoutETH from "./stage-tx/CashoutETH";
+import TopupUSD from "./stage-tx/TopupUSD";
+import CashoutUSD from "./stage-tx/CashoutUSD";
 // import Button from "../theme/Button";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -26,7 +28,6 @@ export default function Wallet() {
   const walletAddress = useSelector(selectWalletAddress);
   const ETHBalance = useSelector(selectETHBalance);
   const USDBalance = useSelector(selectUSDBalance);
-
 
   const [statusModalTopupETH, setStatusModalTopupETH] = useState(false);
   const [statusModalCashoutETH, setStatusModalCashoutETH] = useState(false);
@@ -108,11 +109,14 @@ export default function Wallet() {
         <div className="p-3 border-b-4 border-slate-500 ">
           <div className="text-center">
             <p className="font-bold  text-blue-500">Available crypto balance</p>
-            <img
-              className="w-16 mx-auto m-2"
-              src="img/ethereum.png"
-              alt="ethereum logo"
-            ></img>
+
+            <div className="h-32 grid place-items-center ">
+              <img
+                className="w-16 h-18 mx-auto"
+                src="img/ethereum.png"
+                alt="ethereum logo"
+              ></img>
+            </div>
             {/* showing grand total in balance */}
             <p className="text-slate-200 text-xl">
               {ETHBalance.totalETH} <samp className="text-blue-700">ETH</samp>
@@ -133,7 +137,7 @@ export default function Wallet() {
                 <FontAwesomeIcon icon={faDownLong} />
               </p>
               <button
-                className="text-orange-500 py-2 px-4 rounded hover:bg-slate-800"
+                className="w-32 text-orange-500 py-2 px-4 rounded  bg-slate-800 hover:bg-slate-700"
                 onClick={openModalTopupETH}
               >
                 Top Up
@@ -144,7 +148,7 @@ export default function Wallet() {
                 <FontAwesomeIcon icon={faUpLong} />
               </p>
               <button
-                className="text-green-500 py-2 px-4 rounded hover:bg-slate-800"
+                className="w-32 text-green-500 py-2 px-4 rounded bg-slate-800 hover:bg-slate-700"
                 onClick={openModalCashoutETH}
               >
                 Cash Out
@@ -156,11 +160,14 @@ export default function Wallet() {
         <div className="p-3 border-b-4 border-slate-500 ">
           <div className="text-center">
             <p className="font-bold  text-blue-500">Available usd balance</p>
-            <img
-              className="w-16 mx-auto m-4"
-              src="img/usd.png"
-              alt="usd logo"
-            ></img>
+
+            <div className="h-32 grid place-items-center">
+              <img
+                className="w-16 mx-auto "
+                src="img/usd.png"
+                alt="usd logo"
+              ></img>
+            </div>
             {/* showing grand total in balance */}
             <p className="text-slate-200 text-xl">
               {convertUSD(USDBalance.totalUSD)}
@@ -182,7 +189,7 @@ export default function Wallet() {
                 <FontAwesomeIcon icon={faDownLong} />
               </p>
               <button
-                className="text-orange-500 py-2 px-4 rounded hover:bg-slate-800"
+                className="w-32 text-orange-500 py-2 px-4 rounded bg-slate-800 hover:bg-slate-700"
                 onClick={openModalTopupUSD}
               >
                 Top Up
@@ -193,7 +200,7 @@ export default function Wallet() {
                 <FontAwesomeIcon icon={faUpLong} />
               </p>
               <button
-                className="text-green-500 py-2 px-4 rounded hover:bg-slate-800"
+                className="w-32 text-green-500 py-2 px-4 rounded bg-slate-800 hover:bg-slate-700"
                 onClick={openModalCashoutUSD}
               >
                 Cash Out
@@ -242,26 +249,32 @@ export default function Wallet() {
         closeHandle={closeModalTopupETH}
       >
         {/* <Question/> */}
-        <TopupETH  />
+        <TopupETH closeModal={closeModalTopupETH} />
       </Modal>
       {/* Topup USD */}
       <Modal
         title="Top up (USD)"
         action={statusModalTopupUSD}
         closeHandle={closeModalTopupUSD}
-      ></Modal>
+      >
+        <TopupUSD closeModal={closeModalTopupUSD} />
+      </Modal>
       {/* Cashout  ETH  */}
       <Modal
         title="Cash out (ETH)"
         action={statusModalCashoutETH}
         closeHandle={closeModalCashoutETH}
-      ></Modal>
+      >
+        <CashoutETH closeModal={closeModalCashoutETH} />
+      </Modal>
       {/* Cashout USD */}
       <Modal
         title="Cash out (USD)"
         action={statusModalCashoutUSD}
         closeHandle={closeModalCashoutUSD}
-      ></Modal>
+      >
+        <CashoutUSD closeModal={closeModalCashoutUSD}></CashoutUSD>
+      </Modal>
     </Main>
   );
 }

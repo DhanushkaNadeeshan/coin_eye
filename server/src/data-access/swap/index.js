@@ -16,6 +16,7 @@ const requestETH = _requestETH({
   Swap,
   sendAlert,
   dataAccessNotification,
+  Account,
 });
 const update = _update({
   Swap,

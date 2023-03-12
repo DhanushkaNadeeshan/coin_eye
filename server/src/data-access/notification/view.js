@@ -4,7 +4,7 @@ const _view = ({ Notification }) => {
 
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await Notification.find({ refUser });
+        let result = await Notification.find({ refUser }).sort({ _id: -1 });
 
         resolve(result);
       } catch (error) {

@@ -8,10 +8,10 @@ import axios from "axios";
 import { selectUser } from "../../utils/slice/userSlice";
 import { useSelector } from "react-redux";
 
-export default function Question() {
+export default function Question({ closeModal, setViewQuestion }) {
   const userSelector = useSelector(selectUser);
 
-  const [timeLeft, setTimeLeft] = useState(5 * 60);
+  const [timeLeft, setTimeLeft] = useState(3 * 60);
   const [question, setQuestion] = useState("");
   const [anwser, setAnwser] = useState("");
   const [failedAttempt, setFailedAttempt] = useState("");
@@ -28,6 +28,10 @@ export default function Question() {
   let seconds = timeLeft % 60;
   seconds = `${seconds}`.length === 1 ? `0${seconds}` : seconds;
 
+  if (timeLeft === 0) {
+    closeModal();
+  }
+
   const foo = () => {
     const info = {
       id: userSelector.id,
@@ -39,6 +43,7 @@ export default function Question() {
       .then(({ data }) => {
         const { result } = data;
         if (result.success) {
+          setViewQuestion(false);
         } else {
           if (result.satus === "block") {
             alert("You can't do TX");
@@ -62,7 +67,7 @@ export default function Question() {
 
   return (
     <div className="px-4">
-      <p className="text-center my-5 text-7xl text-blue-300">
+      <p className="text-center my-5 text-7xl text-blue-300 animate-pulse">
         <FontAwesomeIcon icon={faLock} />
       </p>
 

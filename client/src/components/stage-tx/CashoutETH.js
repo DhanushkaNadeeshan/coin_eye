@@ -1,0 +1,86 @@
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectWalletAddress,
+  selectETHBalance,
+  updateETH,
+} from "../../utils/slice/accountSlice";
+
+import Button from "../../theme/Button";
+import InputText from "../../theme/InputText";
+import axios from "axios";
+
+export default function CashoutETH({ closeModal }) {
+  const walletAddress = useSelector(selectWalletAddress);
+  const savingAccountETHSelector = useSelector(selectETHBalance);
+  const dispatch = useDispatch();
+
+  const [amount, setAmount] = useState("0");
+
+  const close = () => {
+    closeModal();
+  };
+
+  const makeTx = () => {
+    const info = {
+      address: walletAddress,
+      amount: parseFloat(amount),
+      status: "remove",
+    };
+
+    const url = `/api/account/ETH/transaction`;
+    axios
+      .put(url, info)
+      .then(({ data }) => {
+        if (data.success) {
+          const { totalETH, transactionETHBalance } = data.result;
+
+          const updatedinfo = {
+            totalETH: totalETH,
+            savingAccountETH: totalETH - transactionETHBalance,
+            transactionAccountETH: transactionETHBalance,
+          };
+
+          dispatch(updateETH(updatedinfo));
+          close();
+        }
+      })
+      .catch((error) => {
+        console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
+      });
+  };
+
+  return (
+    <div>
+      <p className="text-green-400 text-center">Send To Saving Account</p>
+
+      <img
+        src="./img/down-arrow.png"
+        alt="downarrow"
+        className="w-1/5 mx-auto animate-bounce mt-6"
+      ></img>
+
+      <div className="mt-8">
+        <div className="w-3/4 mx-auto mt-3">
+          <p className="text-left font-bold text-slate-400">Available ETH</p>
+          <p className="text-slate-400 text-right text-xl">
+            {savingAccountETHSelector.transactionAccountETH}{" "}
+            <samp className="text-blue-700">ETH</samp>
+          </p>
+        </div>
+        <div className="w-3/4 mx-auto mt-3">
+          <p className="text-left font-bold text-slate-400">Amount</p>
+          <InputText
+            name="amount"
+            css="text-right"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <div className="w-1/2 my-8 mx-auto">
+          <Button onClick={makeTx}>Update</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
