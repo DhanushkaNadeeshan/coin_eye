@@ -18,7 +18,7 @@ export const getCryptoSlice = createSlice({
     ...initialState,
   },
   reducers: {
-    create: (state, action) => {
+    setGetcrypto: (state, action) => {
       const {
         id,
         createdAt,
@@ -43,3 +43,11 @@ export const getCryptoSlice = createSlice({
     },
   },
 });
+
+export const { setGetcrypto } = getCryptoSlice.actions;
+
+export const selectGetcrypto = (state) => {
+  return state.getcrypto;
+};
+
+export default getCryptoSlice.reducer;

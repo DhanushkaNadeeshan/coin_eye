@@ -3,13 +3,14 @@ import { Link, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../utils/slice/userSlice";
+import { setRequestCrypto } from "../utils/slice/requestCryptoSlice";
 import {
   selectWalletAddress,
   updateETH,
   selectETHBalance,
 } from "../utils/slice/accountSlice";
 import io from "socket.io-client";
-
+import { setGetcrypto } from "../utils/slice/getCryptoSlice";
 import {
   faUser,
   faWallet,
@@ -33,29 +34,33 @@ export default function Dashboard() {
   const [path, setPath] = useState("wallet");
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
-      query: { address: walletAddress },
-    });
+    if (walletAddress) {
+      // startup
+      requestCryptoData();
 
-    socket.on("connect", () => {
-      console.log("Connected with ID:", socket.id);
-    });
+      const socket = io("http://localhost:5000", {
+        query: { address: walletAddress },
+      });
 
-    socket.on("disconnect", () => {
-      console.log("disconnect");
-    });
+      socket.on("connect", () => {
+        console.log("Connected with ID:", socket.id);
+      });
 
-    socket.on("message", (data) => {
-      alertHandler(data);
-      console.log("Received message:", data);
-    });
+      socket.on("disconnect", () => {
+        console.log("disconnect");
+      });
 
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("message");
-    };
-  }, []);
+      socket.on("message", (data) => {
+        alertHandler(data);
+        console.log("Received message:", data);
+      });
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
+        socket.off("message");
+      };
+    }
+  }, [walletAddress]);
 
   const logout = () => {
     axios.post("/api/authentication/logout").then(({ data }) => {
@@ -85,12 +90,68 @@ export default function Dashboard() {
       .catch((err) => console.log(err));
   };
 
+  const requestCryptoData = () => {
+    const url = `/api/swap/${walletAddress}`;
+
+    axios
+      .get(url)
+      .then(({ data }) => {
+        // console.log("🚀 ~ file: messageHandler.js:16 ~ .then ~ data:", data);
+        let list = data.result;
+        // get sender data -> status pending
+        const index = list.findIndex(
+          (rs) => rs.senderAddress === walletAddress
+        );
+        if (index > -1) {
+          const tempData = list[index];
+          const { _id, ...res } = tempData;
+          dispatch(setGetcrypto({ id: _id, ...res, send: true }));
+          list.splice(index, 1);
+        }
+
+        dispatch(setRequestCrypto(list));
+      })
+      .catch((error) => {
+        console.log(
+          "🚀 ~ file: messageHandler.js:13 ~ axios.get ~ error:",
+          error
+        );
+      });
+  };
+
+  const acceptRequestETH = () => {
+    const initialState = {
+      id: "",
+      createdAt: "",
+      receiverAddress: "",
+      senderAddress: "",
+      USDValue: "",
+      ETHValue: "",
+      status: "",
+      senderId: "",
+      send: false,
+    };
+
+    dispatch(setGetcrypto(initialState));
+  };
+
   const alertHandler = (message) => {
     switch (message) {
       case "update.balance.ETH":
         checkETHBalance();
         break;
-
+      case "swap.request.balance.ETH":
+        requestCryptoData();
+        break;
+      case "swap.request.cancel.ETH":
+        requestCryptoData();
+        break;
+      case "swap.process.done.ETH":
+        requestCryptoData();
+        break;
+      case "swap.request.accept.ETH":
+        acceptRequestETH();
+        break;
       default:
         break;
     }
