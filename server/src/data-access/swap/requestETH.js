@@ -27,8 +27,9 @@ const _requestETH = ({
         let usdValueOfETH = amount * USDRate;
         usdValueOfETH = usdValueOfETH.toFixed(2);
 
+        console.log("🚀 ~ file: requestETH.js:31 ~ returnnewPromise ~ usdValueOfETH:", usdValueOfETH , user.t_account_USD)
         if (usdValueOfETH > user.t_account_USD) {
-          return reject("requested amount grater than transaction");
+          return reject("requested USD amount grater than transaction");
         }
 
         user.total_USD = user.total_USD - usdValueOfETH * 100;

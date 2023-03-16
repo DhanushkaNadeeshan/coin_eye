@@ -76,12 +76,17 @@ const _recovery = ({ User }) => {
           user.accessibility.failedAttempt = 0;
           user.accessibility.status = "active";
           user.accessibility.reason = "";
+          (user.securityQuestion = "What is your favorite book?"),
+            (user.anwser = "abc");
 
           await user.save();
 
           return resolve({
             success: true,
-            msg: "successfully recovery the wallet",
+            msg: `We have successfully recovered your wallet. For security purposes,
+             we kindly request that you reset your security question. We suggest that 
+             you use the following question: "What is your favorite book?" 
+             and provide the answer as "abc". `,
           });
         } else {
           user.accessibility.status = "dined";

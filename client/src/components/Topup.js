@@ -8,7 +8,7 @@ import { selectCards } from "../utils/slice/accountSlice";
 import { selectUser } from "../utils/slice/userSlice";
 import axios from "axios";
 import { updateUSD, selectUSDBalance } from "../utils/slice/accountSlice";
-import Alert from "../theme/Alert";
+import { setAlert } from "../utils/slice/alertSlice";
 import UpdateCard from "./card/UpdateCard";
 import AddCard from "./card/AddCard";
 import { convertUSD, convertUSDWithoutDecimal } from "../utils/app";
@@ -19,13 +19,20 @@ export default function Topup() {
   const cardsList = useSelector(selectCards);
   const userSelector = useSelector(selectUser);
   const USDBalance = useSelector(selectUSDBalance);
-
   const [number, setNubmer] = useState("");
   const [amount, setAmount] = useState("0.00");
   const [statusModalAdd, setStatusModalAdd] = useState(false);
   const [statusModalUpdate, setStatusModalUpdate] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
 
   const closeModalAdd = () => {
     setStatusModalAdd(false);
@@ -56,14 +63,7 @@ export default function Topup() {
     setAmount(value);
   };
 
-  const alertHandler = () => {
-    setShowAlert(true);
-    const timer = setTimeout(() => {
-      setShowAlert(false);
-    }, 2000);
 
-    return () => clearTimeout(timer);
-  };
 
   const topUpUsd = () => {
     let tempAmount = convertUSDWithoutDecimal(amount);
@@ -91,7 +91,7 @@ export default function Topup() {
             transactionAccountUSD,
             savingAccountUSD: totalUSD - transactionAccountUSD,
           };
-
+          sendAlert("success", "Top-up complete! You've added USD to your account.")
           dispatch(updateUSD(updatedUSD));
 
           setAmount("0.00");
@@ -99,6 +99,7 @@ export default function Topup() {
       })
       .catch((error) => {
         console.log("🚀 ~ file: Topup.js:79 ~ axios.put ~ error:", error);
+        sendAlert("error", "Whoops! An error occurred during the process.")
       })
       .finally(() => {
         setLoading(false);
@@ -108,7 +109,7 @@ export default function Topup() {
   return (
     <Main name="Topup">
       {loading && <Loader />}
-      {showAlert && <Alert action={false}>Success</Alert>}
+
       <div className="text-center">
         <p className="font-bold  text-blue-500">Available USD balance</p>
 
@@ -195,7 +196,6 @@ export default function Topup() {
       >
         <AddCard
           closeModelHandle={closeModalAdd}
-          alertHandler={alertHandler}
           userSelector={userSelector}
         />
       </Modal>
@@ -208,7 +208,6 @@ export default function Topup() {
         <UpdateCard
           cardsList={cardsList}
           closeModelHandle={closeModalUpdate}
-          alertHandler={alertHandler}
           user={userSelector}
         />
       </Modal>

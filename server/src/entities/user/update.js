@@ -1,5 +1,5 @@
 const _update = () => {
-  return function _update({ id, name, email, securityQuestion, anwser }) {
+  return function _update({ id, name, email, securityQuestion, answer }) {
     if (!id) {
       throw new Error("Please insert mail");
     }
@@ -9,7 +9,7 @@ const _update = () => {
       get_email: () => email,
       get_name: () => name,
       get_securityQuestion: () => securityQuestion,
-      get_anwser: () => anwser,
+      get_anwser: () => answer,
     });
   };
 };

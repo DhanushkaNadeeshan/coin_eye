@@ -4,7 +4,7 @@ const _update = ({ User }) => {
     return new Promise((resolve, reject) => {
       User.findOneAndUpdate({ _id: id }, data)
         .then((rs) => {
-          resolve(rs);
+          resolve(data);
         })
         .catch((error) => {
           reject(error);

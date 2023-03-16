@@ -6,11 +6,11 @@ import { useMemo, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { updateCard, deleteCard } from "../../utils/slice/accountSlice";
+import { setAlert } from "../../utils/slice/alertSlice";
 
 export default function UpdateCard({
   cardsList,
   closeModelHandle,
-  alertHandler,
   user,
 }) {
   const dispatch = useDispatch();
@@ -39,6 +39,15 @@ export default function UpdateCard({
     }
   }, [number]);
 
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
   const updateCardDetail = () => {
     let cardInfo = {
       number: newNumber,
@@ -53,15 +62,16 @@ export default function UpdateCard({
       .then(({ data }) => {
         if (data.success) {
           dispatch(updateCard(data.result));
+          sendAlert("success", "Success! You've updated your card")
         }
       })
       .catch((err) => {
         console.log("🚀 ~ file: UpdateCard.js:65 ~ updateCard ~ err:", err);
-        // alert("updat error!");
+        sendAlert("error", "Whoops! An error occurred during the process.")
       })
       .finally(() => {
         closeModelHandle();
-        alertHandler();
+    
       });
   };
 
@@ -74,17 +84,17 @@ export default function UpdateCard({
     axios
       .delete("/api/card", { data: cardInfo })
       .then(({ data }) => {
-    
         if (data.success) {
           dispatch(deleteCard({ id: data.result.id }));
+          sendAlert("success", "Success! You've removed the card from your account.")
         }
       })
       .catch((err) => {
         console.log("🚀 ~ file: UpdateCard.js:78 ~ removeCard ~ err:", err);
+        sendAlert("error", "Whoops! An error occurred during the process.")
       })
       .finally(() => {
         closeModelHandle();
-        alertHandler();
       });
   };
 

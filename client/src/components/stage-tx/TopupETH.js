@@ -6,7 +6,7 @@ import {
   selectETHBalance,
   updateETH,
 } from "../../utils/slice/accountSlice";
-
+import { setAlert } from "../../utils/slice/alertSlice";
 import Button from "../../theme/Button";
 import InputText from "../../theme/InputText";
 import axios from "axios";
@@ -18,6 +18,16 @@ export default function TopupETH({ closeModal }) {
 
   const [viewQuestion, setViewQuestion] = useState(true);
   const [amount, setAmount] = useState("0");
+
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
 
   const close = () => {
     closeModal();
@@ -42,13 +52,14 @@ export default function TopupETH({ closeModal }) {
             savingAccountETH: totalETH - transactionETHBalance,
             transactionAccountETH: transactionETHBalance,
           };
-
           dispatch(updateETH(updatedinfo));
+          sendAlert("success", "ETH transfer successful to trnsaction account!")
           close();
         }
       })
       .catch((error) => {
         console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
+        sendAlert("error", "Something is goin wrong!")
       });
   };
 

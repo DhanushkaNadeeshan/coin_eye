@@ -103,9 +103,9 @@ usecaseViewAllETH().then((list) => {
 });
 
 // TODO: uncomment this
-// provider.on("block", (blockNumber) => {
-//   onBlockCallback(ethers, provider, blockNumber);
-// });
+provider.on("block", (blockNumber) => {
+  onBlockCallback(ethers, provider, blockNumber);
+});
 
 app.get("*", (req, res) => {
   res.send("Unauthrized");

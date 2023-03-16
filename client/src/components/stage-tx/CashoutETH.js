@@ -5,7 +5,7 @@ import {
   selectETHBalance,
   updateETH,
 } from "../../utils/slice/accountSlice";
-
+import { setAlert } from "../../utils/slice/alertSlice";
 import Button from "../../theme/Button";
 import InputText from "../../theme/InputText";
 import axios from "axios";
@@ -16,6 +16,16 @@ export default function CashoutETH({ closeModal }) {
   const dispatch = useDispatch();
 
   const [amount, setAmount] = useState("0");
+
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
 
   const close = () => {
     closeModal();
@@ -42,11 +52,13 @@ export default function CashoutETH({ closeModal }) {
           };
 
           dispatch(updateETH(updatedinfo));
+          sendAlert("success", " ETH transfer successful to savings account!")
           close();
         }
       })
       .catch((error) => {
         console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
+        sendAlert("error", "Something is goin wrong!")
       });
   };
 

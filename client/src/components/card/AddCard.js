@@ -5,13 +5,21 @@ import InputText from "../../theme/InputText";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addCard } from "../../utils/slice/accountSlice";
+import { setAlert } from "../../utils/slice/alertSlice";
 
-export default function AddCard({
-  closeModelHandle,
-  alertHandler,
-  userSelector,
-}) {
+export default function AddCard({ closeModelHandle, userSelector }) {
+
   const dispatch = useDispatch();
+
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
 
   const insertNewCard = (e) => {
     e.preventDefault();
@@ -30,14 +38,15 @@ export default function AddCard({
     axios
       .post("/api/card", jsonData)
       .then(({ data }) => {
+        sendAlert("success", "You've successfully added a new card!")
         dispatch(addCard(data.result));
       })
       .catch((error) => {
         console.log("🚀 ~ file: Topup.js:44 ~ axios.post ~ error:", error);
+        sendAlert("error", "Whoops! An error occurred during the process.")
       })
       .finally(() => {
         closeModelHandle();
-        alertHandler();
       });
   };
   return (

@@ -6,10 +6,12 @@ import InputText from "../../theme/InputText";
 import Button from "../../theme/Button";
 import axios from "axios";
 import { selectUser } from "../../utils/slice/userSlice";
-import { useSelector } from "react-redux";
+import { setAlert } from "../../utils/slice/alertSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Question({ closeModal, callBack }) {
   const userSelector = useSelector(selectUser);
+  const dispatch = useDispatch();
 
   const [timeLeft, setTimeLeft] = useState(2 * 60);
   const [question, setQuestion] = useState("");
@@ -24,12 +26,21 @@ export default function Question({ closeModal, callBack }) {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
   const minutes = Math.floor(timeLeft / 60);
   let seconds = timeLeft % 60;
   seconds = `${seconds}`.length === 1 ? `0${seconds}` : seconds;
 
   if (timeLeft === 0) {
-    closeModal(false);
+    closeModal("fail");
   }
 
   const foo = () => {
@@ -43,14 +54,14 @@ export default function Question({ closeModal, callBack }) {
       .then(({ data }) => {
         const { result } = data;
         if (result.success) {
-          closeModal(true, callBack);
+          closeModal(callBack);
         } else {
           if (result.satus === "block") {
-            alert("You can't do TX");
-            closeModal(false);
+            sendAlert("error", "Your accout is partially block");
+            closeModal("fail");
           } else {
             setFailedAttempt(result.failedAttempt);
-            alert(result.msg);
+            sendAlert("warning", result.msg);
           }
         }
 
@@ -61,6 +72,8 @@ export default function Question({ closeModal, callBack }) {
           "🚀 ~ file: Question.js:20 ~ returnnewPromise ~ error:",
           error
         );
+
+        sendAlert("warning", "Something is goin wrong!");
       });
   };
 

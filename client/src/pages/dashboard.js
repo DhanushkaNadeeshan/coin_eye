@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, createContext, useContext, useEffect, useMemo } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,6 +9,7 @@ import {
   updateETH,
   selectETHBalance,
 } from "../utils/slice/accountSlice";
+import { selectAlert, setAlert } from "../utils/slice/alertSlice";
 import io from "socket.io-client";
 import { setGetcrypto } from "../utils/slice/getCryptoSlice";
 import {
@@ -20,6 +21,10 @@ import {
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+
+import { Alert, AlertError, AlertWarning } from "../theme/Alert";
+import { ConfirmMessage } from "../theme/Message";
+import Button from "../theme/Button";
 // custome
 // import ManuItem from '../components/MenuItem';
 
@@ -29,6 +34,7 @@ export default function Dashboard() {
   const user = useSelector(selectUser);
   const walletAddress = useSelector(selectWalletAddress);
   const ETHBalance = useSelector(selectETHBalance);
+  const alertSelector = useSelector(selectAlert);
   const dispatch = useDispatch();
 
   const [path, setPath] = useState("wallet");
@@ -62,6 +68,29 @@ export default function Dashboard() {
     }
   }, [walletAddress]);
 
+  useMemo(() => {
+    if (alertSelector.isShow) {
+      const closeAlertTimer = setTimeout(() => {
+        const initialState = {
+          type: "",
+          message: "",
+          isShow: false,
+        };
+        dispatch(setAlert(initialState));
+      }, 5000);
+      return () => clearTimeout(closeAlertTimer);
+    }
+  }, [alertSelector]);
+
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
   const logout = () => {
     axios.post("/api/authentication/logout").then(({ data }) => {
       if (data.success) {
@@ -76,6 +105,7 @@ export default function Dashboard() {
       .get(url)
       .then(({ data }) => {
         if (data.success) {
+          console.log("🚀 ~ file: dashboard.js:108 ~ .then ~ data:", data)
           let { savingAccountETH, transactionAccountETH } = ETHBalance;
           savingAccountETH = data.balance - transactionAccountETH;
           dispatch(
@@ -138,19 +168,31 @@ export default function Dashboard() {
   const alertHandler = (message) => {
     switch (message) {
       case "update.balance.ETH":
+        sendAlert("success", "Success! Your ETH account has been updated.")
         checkETHBalance();
         break;
       case "swap.request.balance.ETH":
+        sendAlert(
+          "warning",
+          "Request sent! You've got an ETH request! Time to take action."
+        );
         requestCryptoData();
         break;
       case "swap.request.cancel.ETH":
+        sendAlert("warning", "Alert: The sender has cancelled the ETH request.")
         requestCryptoData();
         break;
       case "swap.process.done.ETH":
+        sendAlert("success", "Transaction complete: Ether has been transferred successfully.")
         requestCryptoData();
         break;
       case "swap.request.accept.ETH":
+        sendAlert("success", "Approved! Your request has been accepted")
         acceptRequestETH();
+        break;
+      case "swap.request.reject.ETH":
+        sendAlert("error", "ETH request cancelled! The receiver has cancelled your request.")
+        requestCryptoData();
         break;
       default:
         break;
@@ -159,6 +201,23 @@ export default function Dashboard() {
 
   return (
     <>
+      {/* <Alert action={false}>Success</Alert> */}
+
+      {/* Handling Alert */}
+      {alertSelector.type === "warning" && (
+        <AlertWarning>{alertSelector.message}</AlertWarning>
+      )}
+
+      {alertSelector.type === "error" && (
+        <AlertError>{alertSelector.message}</AlertError>
+      )}
+
+      {alertSelector.type === "success" && (
+        <Alert>{alertSelector.message}</Alert>
+      )}
+
+      {/* <ConfirmMessage>
+      </ConfirmMessage> */}
       {/* top bar */}
       <nav className="w-full bg-opacity-60 backdrop-blur-lg fixed top-0 px-2 py-4 bg-gray-700 flex justify-end z-10">
         <code className="text-slate-400">

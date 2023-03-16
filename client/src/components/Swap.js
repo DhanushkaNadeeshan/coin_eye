@@ -15,6 +15,7 @@ import {
   selectUSDBalance,
   selectWalletAddress,
 } from "../utils/slice/accountSlice";
+import { setAlert } from "../utils/slice/alertSlice";
 import { selectRequestCrypto } from "../utils/slice/requestCryptoSlice";
 import { selectGetcrypto, setGetcrypto } from "../utils/slice/getCryptoSlice";
 import { selectUser } from "../utils/slice/userSlice";
@@ -35,6 +36,15 @@ export default function Swap() {
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("0.0");
 
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
   const sendRequest = () => {
     const sendData = {
       senderId: userSelector.id,
@@ -51,10 +61,12 @@ export default function Swap() {
         console.log("🚀 ~ file: Swap.js:46 ~ .then ~ data:", data);
         if (data.success) {
           const { _id, ...res } = data.result;
+          sendAlert("success", "Request sent! Waiting for receiver to accept your ETH transfer.")
           dispatch(setGetcrypto({ id: _id, ...res, send: true }));
         }
       })
       .catch((error) => {
+        sendAlert("error", "Whoops! An error occurred during the process.")
         console.log("🚀 ~ file: Swap.js:46 ~ axios.post ~ error:", error);
       });
   };
@@ -81,11 +93,12 @@ export default function Swap() {
             senderId: "",
             send: false,
           };
-
+          sendAlert("success", "Success! Your request has been cancelled.")
           dispatch(setGetcrypto(initialState));
         }
       })
       .catch((error) => {
+        sendAlert("error", "Whoops! An error occurred during the process.")
         console.log("🚀 ~ file: Swap.js:46 ~ axios.post ~ error:", error);
       });
   };

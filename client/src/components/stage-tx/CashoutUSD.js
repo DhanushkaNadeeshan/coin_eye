@@ -5,6 +5,7 @@ import { selectUser } from "../../utils/slice/userSlice";
 import Button from "../../theme/Button";
 import InputText from "../../theme/InputText";
 import { convertUSD, convertUSDWithoutDecimal } from "../../utils/app";
+import { setAlert } from "../../utils/slice/alertSlice";
 import axios from "axios";
 
 export default function CashoutUSD({ closeModal }) {
@@ -13,6 +14,15 @@ export default function CashoutUSD({ closeModal }) {
   const dispatch = useDispatch();
 
   const [amount, setAmount] = useState("0.0");
+
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
 
   const setUSDAmount = (value) => {
     const numberRegex = /^\d+(?:\.\d+)?$/;
@@ -54,11 +64,13 @@ export default function CashoutUSD({ closeModal }) {
           };
 
           dispatch(updateUSD(updatedinfo));
+          sendAlert("success", " USD transfer successful to savings account!")
           close();
         }
       })
       .catch((error) => {
         console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
+        sendAlert("error", "Something is goin wrong!")
       });
   };
 
@@ -71,7 +83,7 @@ export default function CashoutUSD({ closeModal }) {
         alt="downarrow"
         className="w-1/5 mx-auto animate-bounce mt-6"
       ></img>
-      
+
       <div className="mt-8">
         <div className="w-3/4 mx-auto mt-3">
           <p className="text-left font-bold text-slate-400">Available ETH</p>

@@ -7,7 +7,7 @@ const route = (router, controller) => {
 
   router.post("/question", controller.question);
 
-  router.post("/recovery", controller.recovery);
+  router.put("/recovery", controller.recovery);
 
   router.get("/recovery/:id", controller.getRecoveryQuestion);
 

@@ -6,10 +6,12 @@ import InputText from "../../theme/InputText";
 import Button from "../../theme/Button";
 import axios from "axios";
 import { selectUser } from "../../utils/slice/userSlice";
-import { useSelector } from "react-redux";
+import { setAlert } from "../../utils/slice/alertSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Question({ closeModal, setViewQuestion }) {
   const userSelector = useSelector(selectUser);
+  const dispatch = useDispatch();
 
   const [timeLeft, setTimeLeft] = useState(3 * 60);
   const [question, setQuestion] = useState("");
@@ -24,6 +26,15 @@ export default function Question({ closeModal, setViewQuestion }) {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
+  const sendAlert = (type, message) => {
+    const state = {
+      type: type,
+      message: message,
+      isShow: true,
+    };
+    dispatch(setAlert(state));
+  };
+
   const minutes = Math.floor(timeLeft / 60);
   let seconds = timeLeft % 60;
   seconds = `${seconds}`.length === 1 ? `0${seconds}` : seconds;
@@ -32,7 +43,7 @@ export default function Question({ closeModal, setViewQuestion }) {
     closeModal();
   }
 
-  const foo = () => {
+  const validation = () => {
     const info = {
       id: userSelector.id,
       securityQuestion: question,
@@ -45,17 +56,23 @@ export default function Question({ closeModal, setViewQuestion }) {
         if (result.success) {
           setViewQuestion(false);
         } else {
-          if (result.satus === "block") {
-            alert("You can't do TX");
+         
+          if (result.status === "block") {
+            
+            sendAlert("error" ,"Your accout is partially block")
+            closeModal();
           } else {
+            // send warning message
+            sendAlert("warning" ,result.msg)
             setFailedAttempt(result.failedAttempt);
-            alert(result.msg);
+            
           }
         }
 
         console.log("🚀 ~ file: Question.js:16 ~ .then ~ rs:", result);
       })
       .catch((error) => {
+        sendAlert("warning", "Something is goin wrong!");
         console.log(
           "🚀 ~ file: Question.js:20 ~ returnnewPromise ~ error:",
           error
@@ -97,7 +114,7 @@ export default function Question({ closeModal, setViewQuestion }) {
       />
 
       <div className="w-1/4 mt-4 mx-auto">
-        <Button onClick={foo}>Check</Button>
+        <Button onClick={validation}>Check</Button>
       </div>
 
       <p className="pt-6 text-center text-red-400 text-2xl">
