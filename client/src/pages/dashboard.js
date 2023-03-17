@@ -23,8 +23,6 @@ import {
 import axios from "axios";
 
 import { Alert, AlertError, AlertWarning } from "../theme/Alert";
-import { ConfirmMessage } from "../theme/Message";
-import Button from "../theme/Button";
 // custome
 // import ManuItem from '../components/MenuItem';
 
@@ -39,34 +37,34 @@ export default function Dashboard() {
 
   const [path, setPath] = useState("wallet");
 
-  useEffect(() => {
-    if (walletAddress) {
-      // startup
-      requestCryptoData();
+  const requestCryptoData = () => {
+    const url = `/api/swap/${walletAddress}`;
 
-      const socket = io("http://localhost:5000", {
-        query: { address: walletAddress },
-      });
+    axios
+      .get(url)
+      .then(({ data }) => {
+        // console.log("🚀 ~ file: messageHandler.js:16 ~ .then ~ data:", data);
+        let list = data.result;
+        // get sender data -> status pending
+        const index = list.findIndex(
+          (rs) => rs.senderAddress === walletAddress
+        );
+        if (index > -1) {
+          const tempData = list[index];
+          const { _id, ...res } = tempData;
+          dispatch(setGetcrypto({ id: _id, ...res, send: true }));
+          list.splice(index, 1);
+        }
 
-      socket.on("connect", () => {
-        console.log("Connected with ID:", socket.id);
+        dispatch(setRequestCrypto(list));
+      })
+      .catch((error) => {
+        console.log(
+          "🚀 ~ file: messageHandler.js:13 ~ axios.get ~ error:",
+          error
+        );
       });
-
-      socket.on("disconnect", () => {
-        console.log("disconnect");
-      });
-
-      socket.on("message", (data) => {
-        alertHandler(data);
-        console.log("Received message:", data);
-      });
-      return () => {
-        socket.off("connect");
-        socket.off("disconnect");
-        socket.off("message");
-      };
-    }
-  }, [walletAddress]);
+  };
 
   useMemo(() => {
     if (alertSelector.isShow) {
@@ -105,7 +103,7 @@ export default function Dashboard() {
       .get(url)
       .then(({ data }) => {
         if (data.success) {
-          console.log("🚀 ~ file: dashboard.js:108 ~ .then ~ data:", data)
+          console.log("🚀 ~ file: dashboard.js:108 ~ .then ~ data:", data);
           let { savingAccountETH, transactionAccountETH } = ETHBalance;
           savingAccountETH = data.balance - transactionAccountETH;
           dispatch(
@@ -118,35 +116,6 @@ export default function Dashboard() {
         }
       })
       .catch((err) => console.log(err));
-  };
-
-  const requestCryptoData = () => {
-    const url = `/api/swap/${walletAddress}`;
-
-    axios
-      .get(url)
-      .then(({ data }) => {
-        // console.log("🚀 ~ file: messageHandler.js:16 ~ .then ~ data:", data);
-        let list = data.result;
-        // get sender data -> status pending
-        const index = list.findIndex(
-          (rs) => rs.senderAddress === walletAddress
-        );
-        if (index > -1) {
-          const tempData = list[index];
-          const { _id, ...res } = tempData;
-          dispatch(setGetcrypto({ id: _id, ...res, send: true }));
-          list.splice(index, 1);
-        }
-
-        dispatch(setRequestCrypto(list));
-      })
-      .catch((error) => {
-        console.log(
-          "🚀 ~ file: messageHandler.js:13 ~ axios.get ~ error:",
-          error
-        );
-      });
   };
 
   const acceptRequestETH = () => {
@@ -168,7 +137,7 @@ export default function Dashboard() {
   const alertHandler = (message) => {
     switch (message) {
       case "update.balance.ETH":
-        sendAlert("success", "Success! Your ETH account has been updated.")
+        sendAlert("success", "Success! Your ETH account has been updated.");
         checkETHBalance();
         break;
       case "swap.request.balance.ETH":
@@ -179,25 +148,63 @@ export default function Dashboard() {
         requestCryptoData();
         break;
       case "swap.request.cancel.ETH":
-        sendAlert("warning", "Alert: The sender has cancelled the ETH request.")
+        sendAlert(
+          "warning",
+          "Alert: The sender has cancelled the ETH request."
+        );
         requestCryptoData();
         break;
       case "swap.process.done.ETH":
-        sendAlert("success", "Transaction complete: Ether has been transferred successfully.")
+        sendAlert(
+          "success",
+          "Transaction complete: Ether has been transferred successfully."
+        );
         requestCryptoData();
         break;
       case "swap.request.accept.ETH":
-        sendAlert("success", "Approved! Your request has been accepted")
+        sendAlert("success", "Approved! Your request has been accepted");
         acceptRequestETH();
         break;
       case "swap.request.reject.ETH":
-        sendAlert("error", "ETH request cancelled! The receiver has cancelled your request.")
+        sendAlert(
+          "error",
+          "ETH request cancelled! The receiver has cancelled your request."
+        );
         requestCryptoData();
         break;
       default:
         break;
     }
   };
+
+  useEffect(() => {
+    if (walletAddress) {
+      // startup
+      requestCryptoData();
+
+      const socket = io("http://localhost:5000", {
+        query: { address: walletAddress },
+      });
+
+      socket.on("connect", () => {
+        console.log("Connected with ID:", socket.id);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("disconnect");
+      });
+
+      socket.on("message", (data) => {
+        alertHandler(data);
+        console.log("Received message:", data);
+      });
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
+        socket.off("message");
+      };
+    }
+  }, [walletAddress]);
 
   return (
     <>

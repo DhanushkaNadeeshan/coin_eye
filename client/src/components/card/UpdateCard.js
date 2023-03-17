@@ -8,11 +8,7 @@ import { useDispatch } from "react-redux";
 import { updateCard, deleteCard } from "../../utils/slice/accountSlice";
 import { setAlert } from "../../utils/slice/alertSlice";
 
-export default function UpdateCard({
-  cardsList,
-  closeModelHandle,
-  user,
-}) {
+export default function UpdateCard({ cardsList, closeModelHandle, user }) {
   const dispatch = useDispatch();
   const [number, setNumber] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -20,6 +16,12 @@ export default function UpdateCard({
   const [cvc, setCVC] = useState("");
   const [expiryYear, setExpiryYear] = useState(null);
   const [expiryMonth, setExpiryMonth] = useState(null);
+  const [errorHandling, setErrorHandling] = useState({
+    number: "",
+    cvc: "",
+    year: "",
+    month: "",
+  });
 
   useMemo(() => {
     let cardInfo = cardsList.find((data) => data.number === number);
@@ -49,6 +51,19 @@ export default function UpdateCard({
   };
 
   const updateCardDetail = () => {
+    let isErrorThere = false;
+
+    const tempValidation = {
+      number: "",
+      cvc: "",
+      year: "",
+      month: "",
+    };
+
+    const regex = /^[+]?\d+$/;
+    const regexMonth = /^(1[0-2]|[1-9])$/;
+    const regexYear = /^([2][0][2-9][0-9])$/;
+
     let cardInfo = {
       number: newNumber,
       id,
@@ -57,21 +72,50 @@ export default function UpdateCard({
       expiryMonth,
     };
 
+    if (!regex.test(cardInfo.number)) {
+      tempValidation.number = "Please check card number again";
+      isErrorThere = true;
+    }
+
+    if (!regex.test(cardInfo.cvc)) {
+      tempValidation.cvc = "Please  check card cvc number again";
+      isErrorThere = true;
+    }
+
+    if (
+      !regex.test(cardInfo.expiryYear) ||
+      !regexYear.test(cardInfo.expiryYear)
+    ) {
+      tempValidation.expiryYear = "Please  check card expiry year again";
+      isErrorThere = true;
+    }
+
+    if (
+      !regex.test(cardInfo.expiryMonth) ||
+      !regexMonth.test(cardInfo.expiryMonth)
+    ) {
+      tempValidation.expiryMonth = "Please  check card expiry month again";
+      isErrorThere = true;
+    }
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
+    }
+
     axios
       .put("/api/card", cardInfo)
       .then(({ data }) => {
         if (data.success) {
           dispatch(updateCard(data.result));
-          sendAlert("success", "Success! You've updated your card")
+          sendAlert("success", "Success! You've updated your card");
         }
       })
       .catch((err) => {
         console.log("🚀 ~ file: UpdateCard.js:65 ~ updateCard ~ err:", err);
-        sendAlert("error", "Whoops! An error occurred during the process.")
+        sendAlert("error", "Whoops! An error occurred during the process.");
       })
       .finally(() => {
         closeModelHandle();
-    
       });
   };
 
@@ -80,18 +124,26 @@ export default function UpdateCard({
       id,
       userId: user.id,
     };
+    if (!id) {
+      
+      sendAlert("error", "Whoops! Please select a card");
+      return false;
+    }
 
     axios
       .delete("/api/card", { data: cardInfo })
       .then(({ data }) => {
         if (data.success) {
           dispatch(deleteCard({ id: data.result.id }));
-          sendAlert("success", "Success! You've removed the card from your account.")
+          sendAlert(
+            "success",
+            "Success! You've removed the card from your account."
+          );
         }
       })
       .catch((err) => {
         console.log("🚀 ~ file: UpdateCard.js:78 ~ removeCard ~ err:", err);
-        sendAlert("error", "Whoops! An error occurred during the process.")
+        sendAlert("error", "Whoops! An error occurred during the process.");
       })
       .finally(() => {
         closeModelHandle();
@@ -138,6 +190,7 @@ export default function UpdateCard({
           value={newNumber}
           onChange={(e) => setNewNumber(e.target.value)}
         />
+        <label className="text-red-400"> {errorHandling.number}</label>
       </div>
       <div className="w-3/4 mx-auto my-3">
         <p className="text-left font-bold text-slate-400">CVC</p>
@@ -146,6 +199,7 @@ export default function UpdateCard({
           value={cvc}
           onChange={(e) => setCVC(e.target.value)}
         />
+        <label className="text-red-400"> {errorHandling.cvc}</label>
       </div>
       <div className="w-3/4 mx-auto my-3">
         <p className="text-left font-bold text-slate-400">Expiry Year</p>
@@ -154,6 +208,7 @@ export default function UpdateCard({
           value={expiryYear}
           onChange={(e) => setExpiryYear(e.target.value)}
         />
+        <label className="text-red-400"> {errorHandling.expiryYear}</label>
       </div>
       <div className="w-3/4 mx-auto my-3">
         <p className="text-left font-bold text-slate-400">Expiry Month</p>
@@ -162,6 +217,7 @@ export default function UpdateCard({
           value={expiryMonth}
           onChange={(e) => setExpiryMonth(e.target.value)}
         />
+        <label className="text-red-400"> {errorHandling.expiryMonth}</label>
       </div>
       <div className="w-3/4 flex mt-4 mx-auto">
         <div className="w-1/2 p-2">

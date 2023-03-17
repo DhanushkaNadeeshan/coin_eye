@@ -35,6 +35,10 @@ export default function Swap() {
 
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("0.0");
+  const [errorHandling, setErrorHandling] = useState({
+    amount: "",
+    address: "",
+  });
 
   const sendAlert = (type, message) => {
     const state = {
@@ -46,6 +50,36 @@ export default function Swap() {
   };
 
   const sendRequest = () => {
+    let isErrorThere = false;
+
+    let validation = /^\d+(?:\.\d+)?$/;
+
+    let validationStatus = validation.test(amount);
+
+    const tempValidation = {
+      amount: "",
+      address: "",
+    };
+
+    if (!validationStatus) {
+      tempValidation.amount = "Please enter valide of amount";
+      isErrorThere = true;
+    }
+
+    if (amount == 0) {
+      tempValidation.amount = "Please enter some of amount";
+      isErrorThere = true;
+    }
+
+    if (!address.trim()) {
+      tempValidation.address = "Please enter wallet address";
+      isErrorThere = true;
+    }
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
+    }
+
     const sendData = {
       senderId: userSelector.id,
       senderAddress: walletAddress,
@@ -61,12 +95,15 @@ export default function Swap() {
         console.log("🚀 ~ file: Swap.js:46 ~ .then ~ data:", data);
         if (data.success) {
           const { _id, ...res } = data.result;
-          sendAlert("success", "Request sent! Waiting for receiver to accept your ETH transfer.")
+          sendAlert(
+            "success",
+            "Request sent! Waiting for receiver to accept your ETH transfer."
+          );
           dispatch(setGetcrypto({ id: _id, ...res, send: true }));
         }
       })
       .catch((error) => {
-        sendAlert("error", "Whoops! An error occurred during the process.")
+        sendAlert("error", "Whoops! An error occurred during the process.");
         console.log("🚀 ~ file: Swap.js:46 ~ axios.post ~ error:", error);
       });
   };
@@ -93,12 +130,12 @@ export default function Swap() {
             senderId: "",
             send: false,
           };
-          sendAlert("success", "Success! Your request has been cancelled.")
+          sendAlert("success", "Success! Your request has been cancelled.");
           dispatch(setGetcrypto(initialState));
         }
       })
       .catch((error) => {
-        sendAlert("error", "Whoops! An error occurred during the process.")
+        sendAlert("error", "Whoops! An error occurred during the process.");
         console.log("🚀 ~ file: Swap.js:46 ~ axios.post ~ error:", error);
       });
   };
@@ -114,6 +151,7 @@ export default function Swap() {
           css="text-right"
           onChange={(e) => setAmount(e.target.value)}
         />
+        <label className="text-red-400"> {errorHandling.amount}</label>
       </div>
       <div className="my-2 ">
         <label className="text-slate-300 font-bold">Enter Wallet Address</label>
@@ -121,6 +159,7 @@ export default function Swap() {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
+        <label className="text-red-400"> {errorHandling.address}</label>
       </div>
 
       <div className="grid grid-cols-2 gap-3 mt-4">
@@ -190,7 +229,7 @@ export default function Swap() {
         <p className="font-bold text-green-400 text-lg m-2">Get crypto</p>
         <div className="flex">
           {/* section 1 - enter amount of needed crypto*/}
-          <div className="w-1/3 h-80 bg-slate-700 p-4">
+          <div className="w-1/3 h-84 bg-slate-700 p-4">
             <div className="text-center">
               <img
                 className="w-14  mx-auto m-2"

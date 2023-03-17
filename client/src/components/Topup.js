@@ -19,11 +19,16 @@ export default function Topup() {
   const cardsList = useSelector(selectCards);
   const userSelector = useSelector(selectUser);
   const USDBalance = useSelector(selectUSDBalance);
+
   const [number, setNubmer] = useState("");
   const [amount, setAmount] = useState("0.00");
   const [statusModalAdd, setStatusModalAdd] = useState(false);
   const [statusModalUpdate, setStatusModalUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorHandling, setErrorHandling] = useState({
+    anwser: "",
+    number: "",
+  });
 
   const sendAlert = (type, message) => {
     const state = {
@@ -63,13 +68,27 @@ export default function Topup() {
     setAmount(value);
   };
 
-
-
   const topUpUsd = () => {
     let tempAmount = convertUSDWithoutDecimal(amount);
+    let isErrorThere = false;
+
+    const tempValidation = {
+      amount: "",
+      card: "",
+    };
 
     if (tempAmount < 500) {
-      return alert("Minimum Amout of Topup : 5$");
+      tempValidation.amount = "Minimum Amout of Topup is 5$";
+      isErrorThere = true;
+    }
+
+    if (!number) {
+      tempValidation.number = "Please select a card";
+      isErrorThere = true;
+    }
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
     }
 
     const sendObj = {
@@ -91,7 +110,10 @@ export default function Topup() {
             transactionAccountUSD,
             savingAccountUSD: totalUSD - transactionAccountUSD,
           };
-          sendAlert("success", "Top-up complete! You've added USD to your account.")
+          sendAlert(
+            "success",
+            "Top-up complete! You've added USD to your account."
+          );
           dispatch(updateUSD(updatedUSD));
 
           setAmount("0.00");
@@ -99,7 +121,7 @@ export default function Topup() {
       })
       .catch((error) => {
         console.log("🚀 ~ file: Topup.js:79 ~ axios.put ~ error:", error);
-        sendAlert("error", "Whoops! An error occurred during the process.")
+        sendAlert("error", "Whoops! An error occurred during the process.");
       })
       .finally(() => {
         setLoading(false);
@@ -171,6 +193,7 @@ export default function Topup() {
                   );
                 })}
             </select>
+            <label className="text-red-400"> {errorHandling.number}</label>
           </div>
 
           <div className="w-2/4 mx-auto">
@@ -181,6 +204,7 @@ export default function Topup() {
               className="text-right"
               css="text-right"
             ></InputText>
+            <label className="text-red-400"> {errorHandling.amount}</label>
           </div>
 
           <div className="w-1/4 mt-4 mx-auto">
@@ -194,10 +218,7 @@ export default function Topup() {
         action={statusModalAdd}
         closeHandle={closeModalAdd}
       >
-        <AddCard
-          closeModelHandle={closeModalAdd}
-          userSelector={userSelector}
-        />
+        <AddCard closeModelHandle={closeModalAdd} userSelector={userSelector} />
       </Modal>
       {/* Update or remove a card */}
       <Modal

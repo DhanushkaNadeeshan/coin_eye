@@ -17,6 +17,10 @@ export default function Question({ closeModal, callBack }) {
   const [question, setQuestion] = useState("");
   const [anwser, setAnwser] = useState("");
   const [failedAttempt, setFailedAttempt] = useState("");
+  const [errorHandling, setErrorHandling] = useState({
+    anwser: "",
+    question: "",
+  });
 
   const securityQuestions = data.securityQuestions;
 
@@ -44,6 +48,27 @@ export default function Question({ closeModal, callBack }) {
   }
 
   const foo = () => {
+    let isErrorThere = false;
+
+    const tempValidation = {
+      anwser: "",
+      question: "",
+    };
+
+    if (!question) {
+      tempValidation.question = "Please pick a question";
+      isErrorThere = true;
+    }
+
+    if (!anwser) {
+      tempValidation.anwser = "Please enter the answer";
+      isErrorThere = true;
+    }
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
+    }
+
     const info = {
       id: userSelector.id,
       securityQuestion: question,
@@ -102,6 +127,8 @@ export default function Question({ closeModal, callBack }) {
         ))}
       </select>
 
+      <label className="text-red-400"> {errorHandling.question}</label>
+
       <p className="py-2 text-slate-400">Anwser</p>
 
       <InputText
@@ -110,6 +137,7 @@ export default function Question({ closeModal, callBack }) {
         onChange={(e) => setAnwser(e.target.value)}
       />
 
+      <label className="text-red-400"> {errorHandling.anwser}</label>
       <div className="w-1/4 mt-4 mx-auto">
         <Button onClick={foo}>Check</Button>
       </div>

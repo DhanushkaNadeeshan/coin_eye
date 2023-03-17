@@ -28,6 +28,11 @@ export default function Setting() {
   const [message, setMessage] = useState("");
   const [callBack, setCallBack] = useState("");
   const [privateKey, setPrivateKey] = useState("");
+  const [errorHandling, setErrorHandling] = useState({
+    anwser: "",
+    question: "",
+    recoveryQuestion: "",
+  });
 
   const sendAlert = (type, message) => {
     const state = {
@@ -63,11 +68,39 @@ export default function Setting() {
   };
 
   const resetInputs = () => {
+    const tempValidation = {
+      anwser: "",
+      question: "",
+      recoveryQuestion: "",
+    };
     setAnswer("");
     setQuestion("");
+    setErrorHandling({ ...tempValidation });
   };
 
   const updateSecuirtyQuestion = () => {
+    let isErrorThere = false;
+
+    const tempValidation = {
+      anwser: "",
+      question: "",
+      recoveryQuestion: "",
+    };
+
+    if (!answer) {
+      tempValidation.anwser = "This feild is required!";
+      isErrorThere = true;
+    }
+
+    if (!question) {
+      tempValidation.question = "Please pick a question!";
+      isErrorThere = true;
+    }
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
+    }
+
     const sendData = {
       id: userSelector.id,
       securityQuestion: question,
@@ -108,10 +141,27 @@ export default function Setting() {
   };
 
   const updateRevoryQuestion = () => {
+    let isErrorThere = false;
+
+    const tempValidation = {
+      anwser: "",
+      question: "",
+      recoveryQuestion: "",
+    };
+
+    if (!recoveryQuestion) {
+      tempValidation.recoveryQuestion = "This feild is required!";
+      isErrorThere = true;
+    }
+
     const sendData = {
       id: userSelector.id,
       securityQuestion: recoveryQuestion,
     };
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
+    }
 
     const url = `/api/user/recovery/`;
 
@@ -180,14 +230,15 @@ export default function Setting() {
               </option>
             ))}
           </select>
-
+          <label className="text-red-400"> {errorHandling.question}</label>
           <p className="py-2 text-blue-400">Anwser (New)</p>
 
           <InputText
-            name="number"
+            name="answer"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
           />
+          <label className="text-red-400"> {errorHandling.anwser}</label>
 
           <div className="flex justify-end">
             <div className="w-32 m-4">
@@ -243,7 +294,10 @@ export default function Setting() {
                   </option>
                 ))}
               </select>
-
+              <label className="text-red-400">
+                {" "}
+                {errorHandling.recoveryQuestion}
+              </label>
               <p className="p-4 text-red-400 border-l bg-slate-700 border-red-400 my-4">
                 Please be informed that your security question will be selected
                 from the following options. Kindly review the choices carefully.

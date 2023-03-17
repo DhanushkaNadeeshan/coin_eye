@@ -18,6 +18,7 @@ export default function TopupETH({ closeModal }) {
 
   const [viewQuestion, setViewQuestion] = useState(true);
   const [amount, setAmount] = useState("0");
+  const [errorHandling, setErrorHandling] = useState("");
 
   const sendAlert = (type, message) => {
     const state = {
@@ -28,12 +29,23 @@ export default function TopupETH({ closeModal }) {
     dispatch(setAlert(state));
   };
 
-
   const close = () => {
     closeModal();
   };
 
   const makeTx = () => {
+    let validation = /^\d+(?:\.\d+)?$/;
+
+    let validationStatus = validation.test(amount);
+
+    if (amount == 0) {
+      return setErrorHandling("Please enter some amount");
+    }
+
+    if (!validationStatus) {
+      return setErrorHandling("Please enter valide amount");
+    }
+
     const info = {
       address: walletAddress,
       amount: parseFloat(amount),
@@ -53,13 +65,16 @@ export default function TopupETH({ closeModal }) {
             transactionAccountETH: transactionETHBalance,
           };
           dispatch(updateETH(updatedinfo));
-          sendAlert("success", "ETH transfer successful to trnsaction account!")
+          sendAlert(
+            "success",
+            "ETH transfer successful to trnsaction account!"
+          );
           close();
         }
       })
       .catch((error) => {
         console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
-        sendAlert("error", "Something is goin wrong!")
+        sendAlert("error", "Something is goin wrong!");
       });
   };
 
@@ -92,6 +107,7 @@ export default function TopupETH({ closeModal }) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
+            <label className="text-red-400"> {errorHandling}</label>
           </div>
           <div className="w-1/2 my-8 mx-auto">
             <Button onClick={makeTx}>Update</Button>

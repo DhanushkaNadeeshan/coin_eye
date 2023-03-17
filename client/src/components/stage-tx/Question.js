@@ -17,6 +17,11 @@ export default function Question({ closeModal, setViewQuestion }) {
   const [question, setQuestion] = useState("");
   const [anwser, setAnwser] = useState("");
   const [failedAttempt, setFailedAttempt] = useState("");
+  const [errorHandling, setErrorHandling] = useState({
+    anwser: "",
+    question: "",
+  });
+  // console.log("🚀 ~ file: Question.js:25 ~ Question ~ validationObject:", validationObject)
 
   const securityQuestions = data.securityQuestions;
 
@@ -43,7 +48,27 @@ export default function Question({ closeModal, setViewQuestion }) {
     closeModal();
   }
 
-  const validation = () => {
+  const checkAnswer = () => {
+    let isErrorThere = false;
+
+    const tempValidation = {
+      anwser: "",
+      question: "",
+    };
+
+    if (!question) {
+      tempValidation.question = "Please pick a question";
+      isErrorThere = true;
+    }
+
+    if (!anwser) {
+      tempValidation.anwser = "Please enter the answer";
+      isErrorThere = true;
+    }
+
+    if (isErrorThere) {
+      return setErrorHandling({ ...tempValidation });
+    }
     const info = {
       id: userSelector.id,
       securityQuestion: question,
@@ -56,16 +81,13 @@ export default function Question({ closeModal, setViewQuestion }) {
         if (result.success) {
           setViewQuestion(false);
         } else {
-         
           if (result.status === "block") {
-            
-            sendAlert("error" ,"Your accout is partially block")
+            sendAlert("error", "Your accout is partially block");
             closeModal();
           } else {
             // send warning message
-            sendAlert("warning" ,result.msg)
+            sendAlert("warning", result.msg);
             setFailedAttempt(result.failedAttempt);
-            
           }
         }
 
@@ -105,6 +127,8 @@ export default function Question({ closeModal, setViewQuestion }) {
         ))}
       </select>
 
+      <label className="text-red-400"> {errorHandling.question}</label>
+
       <p className="py-2 text-slate-400">Anwser</p>
 
       <InputText
@@ -113,8 +137,9 @@ export default function Question({ closeModal, setViewQuestion }) {
         onChange={(e) => setAnwser(e.target.value)}
       />
 
+      <label className="text-red-400"> {errorHandling.anwser}</label>
       <div className="w-1/4 mt-4 mx-auto">
-        <Button onClick={validation}>Check</Button>
+        <Button onClick={checkAnswer}>Check</Button>
       </div>
 
       <p className="pt-6 text-center text-red-400 text-2xl">
