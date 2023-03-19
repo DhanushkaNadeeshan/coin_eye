@@ -22,6 +22,8 @@ const { usecaseViewAllETH } = require("./use-cases/account");
 
 global.onlineUsers = {};
 
+global.AESKey = {};
+
 const PORT = process.env.PORT || 5000;
 
 const app = express();
@@ -65,7 +67,6 @@ global.socketIO.on("connection", (socket) => {
   }
 
   socket.on("disconnect", (rs) => {
-  
     const sid = socket.id;
 
     for (let key in global.onlineUsers) {

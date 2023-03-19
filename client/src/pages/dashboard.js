@@ -1,4 +1,11 @@
-import { useState, createContext, useContext, useEffect, useMemo } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,8 +17,13 @@ import {
   selectETHBalance,
 } from "../utils/slice/accountSlice";
 import { selectAlert, setAlert } from "../utils/slice/alertSlice";
+import {
+  setNotificationList,
+  selectNotificationList,
+} from "../utils/slice/notificationSlice";
 import io from "socket.io-client";
 import { setGetcrypto } from "../utils/slice/getCryptoSlice";
+import { selectLoader, setLoader } from "../utils/slice/loaderSlice";
 import {
   faUser,
   faWallet,
@@ -21,8 +33,10 @@ import {
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-
+import Loader from "../theme/Loader";
 import { Alert, AlertError, AlertWarning } from "../theme/Alert";
+import Message from "../theme/Message";
+
 // custome
 // import ManuItem from '../components/MenuItem';
 
@@ -33,9 +47,14 @@ export default function Dashboard() {
   const walletAddress = useSelector(selectWalletAddress);
   const ETHBalance = useSelector(selectETHBalance);
   const alertSelector = useSelector(selectAlert);
+  const notificationSelector = useSelector(selectNotificationList);
+  const loaderSelector = useSelector(selectLoader);
+
   const dispatch = useDispatch();
 
   const [path, setPath] = useState("wallet");
+  const [infoMessage, setInfoMessage] = useState("");
+  const [openInfoMessage, setOpenInfoMessage] = useState(false);
 
   const requestCryptoData = () => {
     const url = `/api/swap/${walletAddress}`;
@@ -66,6 +85,9 @@ export default function Dashboard() {
       });
   };
 
+  const cloaseInfoMessage = () => {
+    setOpenInfoMessage(false);
+  };
   useMemo(() => {
     if (alertSelector.isShow) {
       const closeAlertTimer = setTimeout(() => {
@@ -117,7 +139,7 @@ export default function Dashboard() {
       })
       .catch((err) => console.log(err));
   };
-
+  // swap
   const acceptRequestETH = () => {
     const initialState = {
       id: "",
@@ -134,7 +156,21 @@ export default function Dashboard() {
     dispatch(setGetcrypto(initialState));
   };
 
+  const callInfoAlert = (message) => {
+    dispatch(
+      setLoader({
+        isShow: false,
+        message: "",
+      })
+    );
+    setInfoMessage(message);
+    setOpenInfoMessage(true);
+  };
+
   const alertHandler = (message) => {
+    // update the notification list
+    getNotificationList(user);
+
     switch (message) {
       case "update.balance.ETH":
         sendAlert("success", "Success! Your ETH account has been updated.");
@@ -172,10 +208,35 @@ export default function Dashboard() {
         );
         requestCryptoData();
         break;
+      case "recovery.ETH.success":
+        callInfoAlert(
+          "Transfer Process is succesfull, please logout the wallet and try"
+        );
+        break;
+      case "recovery.ETH.fail":
+        callInfoAlert("Transfer Process is failed");
+        break;
       default:
         break;
     }
   };
+
+  const getNotificationList = useCallback((user) => {
+    const url = `/api/notification/${user.id}`;
+    axios
+      .get(url)
+      .then(({ data }) => {
+        if (data.success) {
+          dispatch(setNotificationList(data.result));
+        }
+      })
+      .catch((error) => {
+        console.log(
+          "🚀 ~ file: Notifications.js:17 ~ axios.get ~ error:",
+          error
+        );
+      });
+  }, []);
 
   useEffect(() => {
     if (walletAddress) {
@@ -203,12 +264,24 @@ export default function Dashboard() {
         socket.off("disconnect");
         socket.off("message");
       };
+
+      // get
     }
   }, [walletAddress]);
 
+  useEffect(() => {
+    if (user) {
+      getNotificationList(user);
+    }
+  }, [user, getNotificationList]);
+
   return (
     <>
-      {/* <Alert action={false}>Success</Alert> */}
+      {openInfoMessage && (
+        <Message message={infoMessage} close={cloaseInfoMessage} />
+      )}
+
+      {loaderSelector.isShow && <Loader message={loaderSelector.message} />}
 
       {/* Handling Alert */}
       {alertSelector.type === "warning" && (
@@ -278,10 +351,12 @@ export default function Dashboard() {
                 <FontAwesomeIcon icon={faBell} className="mx-4" />
                 Notifications
               </p>
-              <div className="flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex w-2 h-2 rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full w-2 h-2 bg-red-500"></span>
-              </div>
+              {notificationSelector.notify && (
+                <div className="flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex w-2 h-2 rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full w-2 h-2 bg-red-500"></span>
+                </div>
+              )}
               {/* <span className=' px-2 mx-2 text-white bg-red-500 text-sm rounded'>1</span> */}
             </ManuItem>
           </Link>

@@ -3,7 +3,12 @@ const router = express.Router();
 
 const controller = require("../../controllers/card");
 
+const { cookieJwtAuth } = require("../../middlewares/cookeJwtAuth");
+
 const route = require("./routes");
+
+router.use(cookieJwtAuth);
+
 
 const routes = route(router, controller);
 

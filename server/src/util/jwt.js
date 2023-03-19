@@ -11,7 +11,7 @@ function createToken(data) {
 function validateToken(token) {
   const data = {};
   try {
-    data.reult = jwt.verify(token, JWT_SECRET);
+    data.result = jwt.verify(token, JWT_SECRET);
     data.success = true;
   } catch (error) {
     data.success = false;

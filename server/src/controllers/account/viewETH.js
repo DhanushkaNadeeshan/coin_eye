@@ -1,8 +1,10 @@
-const _viewETH = (usecaseSelect) => {
+const _viewETH = (usecaseSelect, dataEncryption) => {
   return async (req, res) => {
     try {
       const address = req.params.address;
-      const result = await usecaseSelect({ address });
+
+      let result = await usecaseSelect({ address });
+      result = dataEncryption(req.key, result);
       res.json({ success: true, result });
     } catch (error) {
       // TODO: make error stander

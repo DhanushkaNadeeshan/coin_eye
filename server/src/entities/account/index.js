@@ -9,14 +9,14 @@ const {
   _updateTransactionBalanceUSD,
 } = require("./updateUSD");
 
-
+const { _recoveryETH } = require("./recoveryETH");
 
 const viewETH = _viewETH();
 const updateSavingBalanceETH = _updateSavingBalanceETH();
 const updateTransactionBalanceETH = _updateTransactionBalanceETH();
 const updateSavingBalanceUSD = _updateSavingBalanceUSD();
 const updateTransactionBalanceUSD = _updateTransactionBalanceUSD();
-
+const recoveryETH = _recoveryETH();
 
 module.exports = {
   viewETH,
@@ -24,4 +24,5 @@ module.exports = {
   updateTransactionBalanceETH,
   updateSavingBalanceUSD,
   updateTransactionBalanceUSD,
+  recoveryETH,
 };

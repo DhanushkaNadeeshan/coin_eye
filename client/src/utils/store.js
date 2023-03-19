@@ -4,6 +4,8 @@ import accountReducer from "./slice/accountSlice";
 import getCryptoReducer from "./slice/getCryptoSlice";
 import requestCryptoReducer from "./slice/requestCryptoSlice";
 import alertReducer from "./slice/alertSlice";
+import notificationReducer from "./slice/notificationSlice";
+import loaderReducer from "./slice/loaderSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +14,7 @@ export const store = configureStore({
     getcrypto: getCryptoReducer,
     requestcrypto: requestCryptoReducer,
     alert: alertReducer,
+    notification: notificationReducer,
+    loader: loaderReducer,
   },
 });

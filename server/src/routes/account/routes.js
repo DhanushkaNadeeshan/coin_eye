@@ -10,6 +10,8 @@ const route = (router, controller) => {
 
   router.put("/USD/transaction", controller.updateTransactionUSDController);
 
+  router.post("/ETH/recovery", controller.recoveryETHController);
+
   return router;
 };
 

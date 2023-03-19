@@ -5,8 +5,10 @@ import Button from "../../theme/Button";
 import InputText from "../../theme/InputText";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { dataEncryptionAES, dataDecryptedAES } from "../../utils/app";
 import { addCard } from "../../utils/slice/accountSlice";
 import { setAlert } from "../../utils/slice/alertSlice";
+import CryptoJS from "crypto-js";
 
 export default function AddCard({ closeModelHandle, userSelector }) {
   const dispatch = useDispatch();
@@ -49,7 +51,7 @@ export default function AddCard({ closeModelHandle, userSelector }) {
 
     const regex = /^[+]?\d+$/;
     const regexMonth = /^(1[0-2]|[1-9])$/;
-    const regexYear = /^([2][0][2-9][0-9])$/
+    const regexYear = /^([2][0][2-9][0-9])$/;
 
     if (!regex.test(jsonData.number)) {
       tempValidation.number = "Please check card number again";
@@ -61,7 +63,10 @@ export default function AddCard({ closeModelHandle, userSelector }) {
       isErrorThere = true;
     }
 
-    if (!regex.test(jsonData.expiryYear) || !regexYear.test(jsonData.expiryYear)) {
+    if (
+      !regex.test(jsonData.expiryYear) ||
+      !regexYear.test(jsonData.expiryYear)
+    ) {
       tempValidation.expiryYear = "Please  check card expiry year again";
       isErrorThere = true;
     }
@@ -80,12 +85,18 @@ export default function AddCard({ closeModelHandle, userSelector }) {
 
     jsonData.id = userSelector.id;
 
+    const encrptedData = dataEncryptionAES(CryptoJS, JSON.stringify(jsonData));
+   
     axios
-      .post("/api/card", jsonData)
+      .post("/api/card", { encrptedData })
       .then(({ data }) => {
         sendAlert("success", "You've successfully added a new card!");
+        // reset the error handling
         setErrorHandling({ ...tempValidation });
-        dispatch(addCard(data.result));
+        // decrypting the data
+        const decryptedData = dataDecryptedAES(CryptoJS, data.result);
+     
+        dispatch(addCard(decryptedData));
       })
       .catch((error) => {
         console.log("🚀 ~ file: Topup.js:44 ~ axios.post ~ error:", error);

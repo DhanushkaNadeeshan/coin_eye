@@ -1,17 +1,17 @@
-const route = (router, controller) => {
+const route = (router, controller, cookieJwtAuth) => {
   // #####
   // GET
-  router.get("/:id", controller.selectController);
+  router.get("/:id", cookieJwtAuth, controller.selectController);
 
   router.post("/signup/google", controller.makeWithGoogle);
 
-  router.post("/question", controller.question);
+  router.post("/question", cookieJwtAuth, controller.question);
 
-  router.put("/recovery", controller.recovery);
+  router.put("/recovery", cookieJwtAuth, controller.recovery);
 
-  router.get("/recovery/:id", controller.getRecoveryQuestion);
+  router.get("/recovery/:id", cookieJwtAuth, controller.getRecoveryQuestion);
 
-  router.put("/", controller.update);
+  router.put("/", cookieJwtAuth, controller.update);
 
   return router;
 };

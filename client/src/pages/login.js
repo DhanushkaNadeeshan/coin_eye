@@ -78,7 +78,8 @@ export default function Login() {
             s_accountETH: createSavingAccountBalance(total_ETH, t_account_ETH),
           };
 
-          console.log(accountDetails);
+          window.sessionStorage.setItem("AES", data.aesKey);
+
           dispatch(setUser({ id, name, email, picture, loginStatus: true }));
           dispatch(setWalletDetails(accountDetails));
           // update login status

@@ -7,6 +7,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { updateCard, deleteCard } from "../../utils/slice/accountSlice";
 import { setAlert } from "../../utils/slice/alertSlice";
+import { dataEncryptionAES, dataDecryptedAES } from "../../utils/app";
+import CryptoJS from "crypto-js";
 
 export default function UpdateCard({ cardsList, closeModelHandle, user }) {
   const dispatch = useDispatch();
@@ -102,11 +104,14 @@ export default function UpdateCard({ cardsList, closeModelHandle, user }) {
       return setErrorHandling({ ...tempValidation });
     }
 
+    const encrptedData = dataEncryptionAES(CryptoJS, JSON.stringify(cardInfo));
     axios
-      .put("/api/card", cardInfo)
+      .put("/api/card", { encrptedData })
       .then(({ data }) => {
         if (data.success) {
-          dispatch(updateCard(data.result));
+          // decrypting the data
+          const decryptedData = dataDecryptedAES(CryptoJS, data.result);
+          dispatch(updateCard(decryptedData));
           sendAlert("success", "Success! You've updated your card");
         }
       })
@@ -125,7 +130,6 @@ export default function UpdateCard({ cardsList, closeModelHandle, user }) {
       userId: user.id,
     };
     if (!id) {
-      
       sendAlert("error", "Whoops! Please select a card");
       return false;
     }

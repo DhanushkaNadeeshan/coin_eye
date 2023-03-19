@@ -23,6 +23,10 @@ const AccountSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("account", AccountSchema);

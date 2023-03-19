@@ -5,6 +5,8 @@ const dataAccess = require("../../data-access/account");
 
 const { _viewETHByAddress, _viewAllETH } = require("./viewETH");
 
+const wallet = require("../../util/wallet");
+
 const {
   _updateSavingBalanceETH,
   _updateTransactionBalanceETH,
@@ -14,6 +16,8 @@ const {
   _updateSavingBalanceUSD,
   _updateTransactionBalanceUSD,
 } = require("./updateUSD");
+
+const { _recoveryETH } = require("./recoveryETH");
 
 const usecaseViewETHByAddress = _viewETHByAddress({ dataAccess, entities });
 
@@ -36,6 +40,8 @@ const updateTransactionBalanceETH = _updateTransactionBalanceETH({
   entities,
 });
 
+const recoveryETH = _recoveryETH({ dataAccess, entities, wallet });
+
 module.exports = {
   usecaseViewAllETH,
   usecaseViewETHByAddress,
@@ -43,4 +49,5 @@ module.exports = {
   updateTransactionBalanceUSD,
   updateSavingBalanceETH,
   updateTransactionBalanceETH,
+  recoveryETH,
 };

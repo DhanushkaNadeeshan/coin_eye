@@ -9,7 +9,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../utils/slice/userSlice";
 import { setAlert } from "../utils/slice/alertSlice";
 import { selectWalletAddress } from "../utils/slice/accountSlice";
+import { setLoader } from "../utils/slice/loaderSlice";
 import axios from "axios";
+import { dataDecryptedAES } from "../utils/app";
+import CryptoJS from "crypto-js";
+import { ConfirmMessage } from "../theme/Message";
 
 export default function Setting() {
   const securityQuestions = data.securityQuestions;
@@ -28,6 +32,7 @@ export default function Setting() {
   const [message, setMessage] = useState("");
   const [callBack, setCallBack] = useState("");
   const [privateKey, setPrivateKey] = useState("");
+  const [openConMsgTransferAcc, setOpenConMsgTransferAcc] = useState(false);
   const [errorHandling, setErrorHandling] = useState({
     anwser: "",
     question: "",
@@ -195,7 +200,9 @@ export default function Setting() {
       .get(`/api/account/ETH/${address}`)
       .then(({ data }) => {
         sendAlert("success", "Your requst is approved!");
-        setPrivateKey(data.result.private_key);
+
+        const decryptedData = dataDecryptedAES(CryptoJS, data.result);
+        setPrivateKey(decryptedData.private_key);
       })
       .catch((error) => {
         sendAlert("warning", "Something is goin wrong!");
@@ -206,8 +213,39 @@ export default function Setting() {
       });
   };
 
+  const transferToNewAccount = () => {
+    setOpenConMsgTransferAcc(false);
+
+    dispatch(
+      setLoader({
+        isShow: true,
+        message: "Just a moment! Your request is being processed",
+      })
+    );
+
+    axios.post("/api/account/ETH/recovery", { address }).catch((error) => {
+      dispatch(
+        setLoader({
+          isShow: false,
+          message: "",
+        })
+      );
+      sendAlert("error", "TX fail");
+      console.log("🚀 ~ file: Setting.js:233 ~ axios.post ~ error:", error);
+    });
+  };
+
   return (
     <Main name="Setting">
+      {/* confrim message */}
+      {openConMsgTransferAcc && (
+        <ConfirmMessage
+          message={"Do you want to quickly transfer to new account ?"}
+          confrim={transferToNewAccount}
+          close={() => setOpenConMsgTransferAcc(false)}
+        ></ConfirmMessage>
+      )}
+
       <div className="bg-slate-800 p-4 ">
         <p className="border-b text-blue-500 border-blue-500">
           Reset the question
@@ -354,7 +392,9 @@ export default function Setting() {
         </p>
         <div className="p-4">
           <div className="w-64 my-4 mx-auto ">
-            <Button>Quickly transfer to new account</Button>
+            <Button onClick={() => setOpenConMsgTransferAcc(true)}>
+              Quickly transfer to new account
+            </Button>
           </div>
 
           <p className="p-2 text-blue-400 border-l bg-slate-700 border-blue-400 my-4">
