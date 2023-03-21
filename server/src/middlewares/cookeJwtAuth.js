@@ -6,6 +6,7 @@ exports.cookieJwtAuth = (req, res, next) => {
     const { success, result } = validateToken(token);
     if (success) {
       req.key = result.aesKey;
+      req.email = result.email;
       next();
     } else {
       res.status(401).json({

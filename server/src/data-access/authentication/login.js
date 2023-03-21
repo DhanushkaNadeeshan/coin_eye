@@ -8,6 +8,9 @@ const _login = ({ User, Account, dataAccessNotification }) => {
           throw new Error("unavailable");
         }
 
+        if (user.accessibility.status === "dined") {
+          throw new Error("dined");
+        }
         const account = await Account.find({
           ref_user: user._id,
           active: true,

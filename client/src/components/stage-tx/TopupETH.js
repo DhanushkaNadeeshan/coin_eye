@@ -46,6 +46,14 @@ export default function TopupETH({ closeModal }) {
       return setErrorHandling("Please enter valide amount");
     }
 
+    if (
+      parseFloat(amount) > parseFloat(savingAccountETHSelector.savingAccountETH)
+    ) {
+      return setErrorHandling(
+        "Oops! Your savings amount is higher than your available amount."
+      );
+    }
+
     const info = {
       address: walletAddress,
       amount: parseFloat(amount),

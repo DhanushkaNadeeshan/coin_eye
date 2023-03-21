@@ -36,6 +36,8 @@ import axios from "axios";
 import Loader from "../theme/Loader";
 import { Alert, AlertError, AlertWarning } from "../theme/Alert";
 import Message from "../theme/Message";
+import { dataDecryptedAES } from "../utils/app";
+import CryptoJS from "crypto-js";
 
 // custome
 // import ManuItem from '../components/MenuItem';
@@ -125,12 +127,14 @@ export default function Dashboard() {
       .get(url)
       .then(({ data }) => {
         if (data.success) {
-          console.log("🚀 ~ file: dashboard.js:108 ~ .then ~ data:", data);
+          // decryping data
+          const decryptedData = dataDecryptedAES(CryptoJS, data.result);
+          // datatails get from selector
           let { savingAccountETH, transactionAccountETH } = ETHBalance;
-          savingAccountETH = data.balance - transactionAccountETH;
+          savingAccountETH = decryptedData.total_ETH - transactionAccountETH;
           dispatch(
             updateETH({
-              totalETH: data.balance,
+              totalETH: decryptedData.total_ETH,
               savingAccountETH,
               transactionAccountETH,
             })
@@ -195,19 +199,53 @@ export default function Dashboard() {
           "success",
           "Transaction complete: Ether has been transferred successfully."
         );
+        checkETHBalance();
         requestCryptoData();
         break;
-      case "swap.request.accept.ETH":
+      case "swap.request.accept.ETH": {
         sendAlert("success", "Approved! Your request has been accepted");
+
+        const initialState = {
+          id: "",
+          createdAt: "",
+          receiverAddress: "",
+          senderAddress: "",
+          USDValue: "",
+          ETHValue: "",
+          status: "",
+          senderId: "",
+          send: false,
+        };
+
+        dispatch(setGetcrypto(initialState));
+
+        checkETHBalance();
         acceptRequestETH();
+
         break;
-      case "swap.request.reject.ETH":
+      }
+      case "swap.request.reject.ETH": {
+        const initialState = {
+          id: "",
+          createdAt: "",
+          receiverAddress: "",
+          senderAddress: "",
+          USDValue: "",
+          ETHValue: "",
+          status: "",
+          senderId: "",
+          send: false,
+        };
+        sendAlert("success", "Success! Your request has been cancelled.");
+        dispatch(setGetcrypto(initialState));
+
         sendAlert(
           "error",
           "ETH request cancelled! The receiver has cancelled your request."
         );
         requestCryptoData();
         break;
+      }
       case "recovery.ETH.success":
         callInfoAlert(
           "Transfer Process is succesfull, please logout the wallet and try"

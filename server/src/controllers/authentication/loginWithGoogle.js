@@ -31,6 +31,8 @@ const _loginWithGoogle = (verifyGoogleToken, login, createToken, crypto) => {
         res
           .status(404)
           .json({ status: "unavailable", msg: "User not unavailable!" });
+      } else if (error.message === "Error: dined") {
+        res.status(401).json({ status: "dined", msg: "user is blocked" });
       } else {
         res.status(500).json({ status: "error", msg: "error login" });
       }

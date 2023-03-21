@@ -46,7 +46,18 @@ export default function TopupETH({ closeModal }) {
     setAmount(value);
   };
 
+
   const makeTx = () => {
+
+    const availableUSD = convertUSD(usdBalanceSelector.savingAccountUSD);
+
+    if (parseFloat(amount) > parseFloat(availableUSD)) {
+      return sendAlert(
+        "error",
+        "Oops! Your savings amount is higher than your available amount."
+      );
+    }
+  
     const info = {
       id: userSelector.id,
       amount: convertUSDWithoutDecimal(amount),

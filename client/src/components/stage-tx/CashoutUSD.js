@@ -45,6 +45,16 @@ export default function CashoutUSD({ closeModal }) {
   };
 
   const makeTx = () => {
+    if (
+      convertUSDWithoutDecimal(amount) >
+      parseInt(usdBalanceSelector.transactionAccountUSD)
+    ) {
+      return sendAlert(
+        "error",
+        "Oops! Your Transaction amount is higher than your available amount."
+      );
+    }
+
     const info = {
       id: userSelector.id,
       amount: convertUSDWithoutDecimal(amount),
@@ -64,13 +74,17 @@ export default function CashoutUSD({ closeModal }) {
           };
 
           dispatch(updateUSD(updatedinfo));
-          sendAlert("success", " USD transfer successful to savings account!")
+          sendAlert("success", " USD transfer successful to savings account!");
           close();
         }
       })
       .catch((error) => {
         console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
-        sendAlert("error", "Something is goin wrong!")
+        if (error.response?.data.message === "User is block") {
+          sendAlert("error", "Your accout is partially block!");
+        } else {
+          sendAlert("error", "Something is goin wrong!");
+        }
       });
   };
 

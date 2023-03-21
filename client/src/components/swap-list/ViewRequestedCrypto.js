@@ -4,6 +4,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { removeRequestCrypto } from "../../utils/slice/requestCryptoSlice";
+import { setLoader } from "../../utils/slice/loaderSlice";
 
 export default function ViewRequestedCrypto({ data }) {
   const dispatch = useDispatch();
@@ -38,7 +39,12 @@ export default function ViewRequestedCrypto({ data }) {
       id: _id,
       status: "accept",
     };
-
+    dispatch(
+      setLoader({
+        isShow: true,
+        message: "Just a little longer! This action may take some time.",
+      })
+    );
     axios
       .put(url, sendData)
       .then(({ data }) => {
@@ -48,6 +54,14 @@ export default function ViewRequestedCrypto({ data }) {
       })
       .catch((error) => {
         console.log("🚀 ~ file: Swap.js:46 ~ axios.post ~ error:", error);
+      })
+      .finally(() => {
+        dispatch(
+          setLoader({
+            isShow: false,
+            message: "",
+          })
+        );
       });
   };
 

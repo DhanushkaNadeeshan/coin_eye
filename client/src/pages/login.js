@@ -95,6 +95,10 @@ export default function Login() {
         if (data.status === "unavailable") {
           alert("Pleas sign up");
         }
+
+        if (data.status === "dined") {
+          alert("User is block");
+        }
         console.error(err);
       });
   };

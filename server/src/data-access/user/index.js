@@ -3,12 +3,13 @@ const Account = require("../models/Account");
 
 const { newWallet } = require("../../util/wallet");
 
-const _view = require("./view");
+const { _view, _viewByEmail } = require("./view");
 const _make = require("./make");
 const _update = require("./update");
 const { _question, _recovery, _getRecoveryQuestion } = require("./question");
 
 const view = _view({ User });
+const viewByEmail = _viewByEmail({ User });
 const make = _make({ User, Account, newWallet });
 const update = _update({ User });
 const question = _question({ User });
@@ -22,4 +23,5 @@ module.exports = {
   question,
   recovery,
   getRecoveryQuestion,
+  viewByEmail,
 };

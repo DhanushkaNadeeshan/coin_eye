@@ -44,6 +44,14 @@ export default function CashoutETH({ closeModal }) {
       return setErrorHandling("Please enter valide amount");
     }
 
+    if (
+      parseFloat(amount) > parseFloat(savingAccountETHSelector.transactionAccountETH)
+    ) {
+      return setErrorHandling(
+        "Oops! Your Transaction amount is higher than your available amount."
+      );
+    }
+
     const info = {
       address: walletAddress,
       amount: parseFloat(amount),
@@ -70,7 +78,12 @@ export default function CashoutETH({ closeModal }) {
       })
       .catch((error) => {
         console.log("🚀 ~ file: TopupETH.js:35 ~ axios.put ~ error:", error);
-        sendAlert("error", "Something is goin wrong!");
+        if(error.response?.data.message ==='User is block'){
+          sendAlert("error", "Your accout is partially block!");
+        }else{
+          sendAlert("error", "Something is goin wrong!");
+        }
+
       });
   };
 

@@ -140,6 +140,10 @@ export default function Swap() {
       });
   };
 
+  const clearSendRequest = () => {
+    setAddress("");
+    setAmount("0.0");
+  };
   const sendNewRequestHTML = (
     <>
       <div className="my-2">
@@ -163,7 +167,9 @@ export default function Swap() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <Button type="error">Cancel</Button>
+        <Button type="error" onClick={clearSendRequest}>
+          Cancel
+        </Button>
         <Button onClick={sendRequest}>Send</Button>
       </div>
     </>

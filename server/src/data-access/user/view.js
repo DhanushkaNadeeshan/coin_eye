@@ -11,4 +11,16 @@ const _view = ({ User }) => {
   };
 };
 
-module.exports = _view;
+const _viewByEmail = ({ User }) => {
+  return function getUser({ email }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const data = await User.findOne({ email });
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+};
+module.exports = { _view, _viewByEmail };
